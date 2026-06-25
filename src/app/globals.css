@@ -1,26 +1,229 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0f0f0f;
+  --background-elev: #181818;
+  --background-soft: #1f1f1f;
+  --foreground: #f4f4f5;
+  --foreground-muted: #a1a1aa;
+  --foreground-subtle: #71717a;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --accent-from: #8b5cf6;
+  --accent-to: #3b82f6;
+  --accent: #7c5cff;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --warning: #f59e0b;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-elev: var(--background-elev);
+  --color-background-soft: var(--background-soft);
   --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-from: var(--accent-from);
+  --color-accent-to: var(--accent-to);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans), Inter, ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(139, 92, 246, 0.35);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0f0f0f;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+}
+
+/* Reusable utilities */
+.bg-gradient-accent {
+  background-image: linear-gradient(135deg, var(--accent-from) 0%, var(--accent-to) 100%);
+}
+.text-gradient-accent {
+  background-image: linear-gradient(135deg, var(--accent-from) 0%, var(--accent-to) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.glass {
+  background: rgba(24, 24, 24, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+}
+.card {
+  background: var(--background-elev);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px -16px rgba(124, 92, 255, 0.35);
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-weight: 600;
+  color: white;
+  border-radius: 0.75rem;
+  background-image: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px -10px rgba(124, 92, 255, 0.55);
+}
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-weight: 500;
+  color: var(--foreground);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.02);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--foreground-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+.chip-accent {
+  color: white;
+  border-color: transparent;
+  background-image: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease both;
+}
+
+.prose-article {
+  color: var(--foreground);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  max-width: 70ch;
+}
+.prose-article h2 {
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 2.25rem 0 1rem;
+  scroll-margin-top: 6rem;
+}
+.prose-article h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.75rem 0 0.75rem;
+}
+.prose-article p {
+  margin: 0 0 1.1rem;
+  color: var(--foreground-muted);
+}
+.prose-article p strong {
+  color: var(--foreground);
+}
+.prose-article ul,
+.prose-article ol {
+  margin: 0 0 1.2rem;
+  padding-left: 1.25rem;
+  color: var(--foreground-muted);
+}
+.prose-article ul { list-style: disc; }
+.prose-article ol { list-style: decimal; }
+.prose-article li { margin: 0.4rem 0; }
+.prose-article a {
+  color: #c4b5fd;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-article blockquote {
+  border-left: 3px solid transparent;
+  border-image: linear-gradient(180deg, var(--accent-from), var(--accent-to)) 1;
+  padding: 0.5rem 0 0.5rem 1.25rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: var(--foreground);
+}
+.prose-article code {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.35rem;
+  font-size: 0.92em;
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.prose-article pre {
+  background: #0a0a0a;
+  border: 1px solid var(--border);
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #1a1a1a 0%, #242424 50%, #1a1a1a 100%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: 0.5rem;
 }
