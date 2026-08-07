@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { authors, categories } from "@/lib/data";
-import type { Post } from "@/lib/types";
+import type { ApiPost } from "@/lib/models";
 import { Clock, Eye } from "../Icon";
 
 type Variant = "default" | "compact" | "horizontal";
@@ -11,19 +10,20 @@ export default function ArticleCard({
   variant = "default",
   priority = false,
 }: {
-  post: Post;
+  post: ApiPost;
   variant?: Variant;
   priority?: boolean;
 }) {
-  const author = authors.find((a) => a.slug === post.authorSlug);
-  const category = categories.find((c) => c.slug === post.category);
+  const cover = post.cover ?? "/placeholder.png";
+  const author = post.author;
+  const category = post.category;
 
   if (variant === "horizontal") {
     return (
       <Link href={`/blog/${post.slug}`} className="card group flex gap-4 p-3 overflow-hidden">
         <div className="relative w-28 h-28 flex-shrink-0 rounded-xl overflow-hidden">
           <Image
-            src={post.cover}
+            src={cover}
             alt={post.title}
             fill
             sizes="120px"
@@ -59,7 +59,7 @@ export default function ArticleCard({
       <Link href={`/blog/${post.slug}`} className="card group block overflow-hidden">
         <div className="relative aspect-[16/10] overflow-hidden">
           <Image
-            src={post.cover}
+            src={cover}
             alt={post.title}
             fill
             priority={priority}
@@ -89,7 +89,7 @@ export default function ArticleCard({
     <Link href={`/blog/${post.slug}`} className="card group block overflow-hidden">
       <div className="relative aspect-[16/9] overflow-hidden">
         <Image
-          src={post.cover}
+          src={cover}
           alt={post.title}
           fill
           priority={priority}
@@ -110,7 +110,7 @@ export default function ArticleCard({
         <p className="mt-2 text-sm text-foreground-muted line-clamp-2">{post.excerpt}</p>
         <div className="mt-5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {author && (
+            {author?.avatar ? (
               <Image
                 src={author.avatar}
                 alt={author.name}
@@ -118,10 +118,16 @@ export default function ArticleCard({
                 height={28}
                 className="rounded-full object-cover"
               />
+            ) : (
+              <div className="w-7 h-7 rounded-full bg-gradient-accent grid place-items-center text-white text-[10px] font-bold">
+                {author?.name?.[0] ?? "?"}
+              </div>
             )}
             <div className="text-xs">
               <p className="text-foreground">{author?.name}</p>
-              <p className="text-foreground-subtle">{formatDate(post.publishedAt)}</p>
+              <p className="text-foreground-subtle">
+                {post.publishedAt ? formatDate(post.publishedAt) : ""}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3 text-xs text-foreground-subtle">

@@ -1,4 +1,4 @@
-import { Search } from "../Icon";
+import TopbarSearch from "./TopbarSearch";
 
 export default function Topbar({
   title,
@@ -19,13 +19,7 @@ export default function Topbar({
           )}
         </div>
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5 text-sm text-foreground-muted w-72">
-            <Search size={16} />
-            <input
-              placeholder="Search admin…"
-              className="bg-transparent outline-none border-0 text-foreground placeholder:text-foreground-subtle w-full"
-            />
-          </div>
+          <TopbarSearch />
           {action}
         </div>
       </div>

@@ -1,6 +1,36 @@
+"use client";
+
+import { useState } from "react";
+import { ApiError } from "@/lib/api";
+import { subscribe } from "@/lib/inbound";
 import { Mail, Sparkles } from "../Icon";
 
-export default function Newsletter() {
+export default function Newsletter({ source = "site" }: { source?: string }) {
+  const [email, setEmail] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!email.trim()) return;
+    setSaving(true);
+    try {
+      await subscribe(email.trim(), source);
+      setDone(true);
+      setEmail("");
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        setError("You're already subscribed — thanks!");
+      } else {
+        setError(err instanceof ApiError ? err.message : "Subscription failed.");
+      }
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <section className="relative overflow-hidden rounded-3xl border border-white/5 p-8 sm:p-12">
       <div className="absolute inset-0 bg-gradient-to-br from-violet-600/15 via-fuchsia-500/5 to-blue-600/15" />
@@ -28,19 +58,35 @@ export default function Newsletter() {
           </p>
         </div>
 
-        <form className="flex flex-col sm:flex-row gap-3">
-          <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-background border border-white/10 flex-1">
-            <Mail size={18} />
-            <input
-              type="email"
-              placeholder="you@example.com"
-              className="bg-transparent outline-none border-0 text-foreground placeholder:text-foreground-subtle w-full"
-            />
+        {done ? (
+          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-200 p-5">
+            <p className="font-semibold">You're in. ✨</p>
+            <p className="text-sm opacity-80 mt-1">
+              We'll see you in the next Sunday digest.
+            </p>
           </div>
-          <button type="button" className="btn-primary px-6">
-            Subscribe
-          </button>
-        </form>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-background border border-white/10 flex-1">
+              <Mail size={18} />
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="bg-transparent outline-none border-0 text-foreground placeholder:text-foreground-subtle w-full"
+              />
+            </div>
+            <button type="submit" disabled={saving} className="btn-primary px-6 disabled:opacity-60">
+              {saving ? "…" : "Subscribe"}
+            </button>
+          </form>
+        )}
+
+        {error && !done && (
+          <p className="lg:col-span-2 text-xs text-rose-300">{error}</p>
+        )}
       </div>
     </section>
   );

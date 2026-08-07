@@ -2,40 +2,109 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ArticleCard from "@/components/site/ArticleCard";
+import JsonLd from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight, Filter } from "@/components/Icon";
-import { categories, getCategoryBySlug, getPostsByCategory, posts } from "@/lib/data";
+import { apiServer, apiServerSafe } from "@/lib/apiServer";
+import { ApiError } from "@/lib/api";
+import type { ApiCategory, ApiPost } from "@/lib/models";
+import { breadcrumbSchema, collectionPageSchema } from "@/lib/schema";
+import { SITE_NAME, absoluteUrl } from "@/lib/site";
 
-export function generateStaticParams() {
-  return categories.map((c) => ({ slug: c.slug }));
-}
+const PAGE_SIZE = 12;
+
+// P4.14 — Regenerate category pages every 5 minutes.
+export const revalidate = 300;
 
 export async function generateMetadata(
   props: PageProps<"/category/[slug]">,
 ): Promise<Metadata> {
   const { slug } = await props.params;
-  const c = getCategoryBySlug(slug);
-  return {
-    title: c ? c.name : "Category",
-    description: c?.description ?? "Browse posts by category",
-  };
+  const sp = await props.searchParams;
+  const page = Math.max(1, Number(first(sp.page) ?? 1));
+
+  try {
+    const cat = await apiServer<ApiCategory>(`/categories/${slug}`);
+    const canonicalPath =
+      page > 1 ? `/category/${slug}?page=${page}` : `/category/${slug}`;
+    const title =
+      page > 1 ? `${cat.name} — page ${page}` : cat.name;
+    const description =
+      cat.description ??
+      `Articles in the ${cat.name} category on ${SITE_NAME}.`;
+    return {
+      title,
+      description,
+      alternates: { canonical: canonicalPath },
+      openGraph: {
+        title,
+        description,
+        url: absoluteUrl(canonicalPath),
+        siteName: SITE_NAME,
+        type: "website",
+        images: [
+          {
+            url: absoluteUrl("/opengraph-image"),
+            width: 1200,
+            height: 630,
+            alt: cat.name,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [absoluteUrl("/opengraph-image")],
+      },
+    };
+  } catch {
+    return { title: "Category" };
+  }
 }
 
 export default async function CategoryPage(props: PageProps<"/category/[slug]">) {
   const { slug } = await props.params;
-  const category = getCategoryBySlug(slug);
-  if (!category) notFound();
+  const sp = await props.searchParams;
+  const page = Math.max(1, Number(first(sp.page) ?? 1));
 
-  const categoryPosts = getPostsByCategory(slug);
-  const fallback = posts.slice(0, 4);
-  const display = categoryPosts.length > 0 ? categoryPosts : fallback;
+  let category: ApiCategory;
+  try {
+    category = await apiServer<ApiCategory>(`/categories/${slug}`);
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) notFound();
+    throw err;
+  }
+
+  const [posts, allCategories] = await Promise.all([
+    apiServerSafe<ApiPost[]>(`/posts?category=${category._id}&limit=1000`, []),
+    apiServerSafe<ApiCategory[]>("/categories", []),
+  ]);
+
+  const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
+  const clampedPage = Math.min(page, totalPages);
+  const pageStart = (clampedPage - 1) * PAGE_SIZE;
+  const pageItems = posts.slice(pageStart, pageStart + PAGE_SIZE);
+
+  function pageHref(target: number) {
+    return target > 1
+      ? `/category/${slug}?page=${target}`
+      : `/category/${slug}`;
+  }
 
   return (
     <div className="pb-20">
-      {/* Banner */}
-      <section className={`relative overflow-hidden`}>
-        <div
-          className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-25`}
-        />
+      <JsonLd
+        data={[
+          collectionPageSchema(category, posts),
+          breadcrumbSchema([
+            { name: "Home", item: absoluteUrl("/") },
+            { name: "Blog", item: absoluteUrl("/blog") },
+            { name: category.name },
+          ]),
+        ]}
+      />
+      <section className="relative overflow-hidden">
+        <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-25`} />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <nav className="flex items-center gap-2 text-xs text-foreground-subtle">
@@ -52,22 +121,18 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
             {category.description}
           </p>
           <div className="mt-6 flex items-center gap-3 text-sm text-foreground-subtle">
-            <span className="chip">{category.postCount} articles</span>
-            <span className="chip">Updated weekly</span>
+            <span className="chip">{posts.length} articles</span>
           </div>
         </div>
       </section>
 
-      {/* Toolbar */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          {categories.slice(0, 8).map((c) => (
+          {allCategories.slice(0, 8).map((c) => (
             <Link
-              key={c.slug}
+              key={c._id}
               href={`/category/${c.slug}`}
-              className={`chip whitespace-nowrap ${
-                c.slug === category.slug ? "chip-accent" : ""
-              }`}
+              className={`chip whitespace-nowrap ${c._id === category._id ? "chip-accent" : ""}`}
             >
               {c.name}
             </Link>
@@ -86,35 +151,44 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
         </div>
       </div>
 
-      {/* Posts */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {display.map((p) => (
-            <ArticleCard key={p.slug} post={p} />
-          ))}
-        </div>
+        {pageItems.length === 0 ? (
+          <div className="card p-12 text-center text-foreground-subtle">
+            No posts in this category yet.
+          </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {pageItems.map((p) => (
+              <ArticleCard key={p._id} post={p} />
+            ))}
+          </div>
+        )}
 
-        <nav className="mt-12 flex items-center justify-center gap-2">
-          <button className="btn-ghost text-sm" disabled>
-            <ArrowLeft size={14} /> Previous
-          </button>
-          {[1, 2, 3].map((n) => (
-            <button
-              key={n}
-              className={`w-10 h-10 rounded-lg text-sm ${
-                n === 1
-                  ? "bg-gradient-accent text-white font-semibold"
-                  : "text-foreground-muted hover:bg-white/5"
-              }`}
-            >
-              {n}
-            </button>
-          ))}
-          <button className="btn-ghost text-sm">
-            Next <ArrowRight size={14} />
-          </button>
-        </nav>
+        {totalPages > 1 && (
+          <nav
+            aria-label="Pagination"
+            className="mt-12 flex items-center justify-center gap-2 flex-wrap"
+          >
+            {clampedPage > 1 && (
+              <Link href={pageHref(clampedPage - 1)} className="btn-ghost text-sm">
+                <ArrowLeft size={14} /> Previous
+              </Link>
+            )}
+            <span className="text-xs text-foreground-subtle px-4">
+              Page {clampedPage} of {totalPages}
+            </span>
+            {clampedPage < totalPages && (
+              <Link href={pageHref(clampedPage + 1)} className="btn-ghost text-sm">
+                Next <ArrowRight size={14} />
+              </Link>
+            )}
+          </nav>
+        )}
       </div>
     </div>
   );
+}
+
+function first(v: string | string[] | undefined): string | undefined {
+  return Array.isArray(v) ? v[0] : v;
 }

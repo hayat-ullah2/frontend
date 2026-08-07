@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Github, Logo, Mail, Sparkles, Twitter } from "@/components/Icon";
+import AuthTabs from "@/components/auth/AuthTabs";
+import LoginForm from "@/components/auth/LoginForm";
+import { Github, Logo, Mail, Twitter } from "@/components/Icon";
 
 export const metadata: Metadata = {
   title: "Log in",
@@ -27,47 +29,9 @@ export default function LoginPage() {
             Sign in to continue reading where you left off.
           </p>
 
-          {/* Dummy admin credentials notice */}
-          <div className="mt-6 rounded-xl border border-violet-500/30 bg-violet-500/5 p-4 text-sm">
-            <p className="flex items-center gap-2 font-medium">
-              <Sparkles size={14} /> Demo credentials
-            </p>
-            <div className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs font-mono text-foreground-muted">
-              <span className="text-foreground-subtle">email</span>
-              <span>admin@nexblog.com</span>
-              <span className="text-foreground-subtle">password</span>
-              <span>admin123</span>
-            </div>
-          </div>
+          <AuthTabs active="login" />
 
-          <form className="mt-6 space-y-4">
-            <Field
-              label="Email"
-              type="email"
-              placeholder="admin@nexblog.com"
-              defaultValue="admin@nexblog.com"
-            />
-            <Field
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              defaultValue="admin123"
-              hint={
-                <Link href="#" className="text-xs text-foreground-subtle hover:text-foreground">
-                  Forgot password?
-                </Link>
-              }
-            />
-
-            <label className="flex items-center gap-2 text-xs text-foreground-muted">
-              <input type="checkbox" defaultChecked className="rounded border-white/20" />
-              Keep me signed in
-            </label>
-
-            <button type="button" className="btn-primary w-full">
-              Log in
-            </button>
-          </form>
+          <LoginForm />
 
           <div className="mt-6 flex items-center gap-3 text-xs text-foreground-subtle">
             <span className="h-px flex-1 bg-white/5" />
@@ -123,33 +87,3 @@ export default function LoginPage() {
   );
 }
 
-function Field({
-  label,
-  type = "text",
-  placeholder,
-  defaultValue,
-  hint,
-}: {
-  label: string;
-  type?: string;
-  placeholder?: string;
-  defaultValue?: string;
-  hint?: React.ReactNode;
-}) {
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-1.5">
-        <label className="block text-xs uppercase tracking-wider text-foreground-subtle">
-          {label}
-        </label>
-        {hint}
-      </div>
-      <input
-        type={type}
-        placeholder={placeholder}
-        defaultValue={defaultValue}
-        className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none placeholder:text-foreground-subtle focus:border-violet-500/40 transition"
-      />
-    </div>
-  );
-}

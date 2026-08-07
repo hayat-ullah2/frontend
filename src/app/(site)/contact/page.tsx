@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ContactForm from "@/components/site/ContactForm";
 import {
   Github,
   Linkedin,
@@ -65,43 +66,7 @@ export default function ContactPage() {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16 grid lg:grid-cols-5 gap-10">
         {/* Form */}
-        <form className="lg:col-span-3 card p-6 sm:p-8 space-y-5">
-          <div className="grid sm:grid-cols-2 gap-4">
-            <Field label="Full name" placeholder="Ada Lovelace" />
-            <Field label="Email" placeholder="you@example.com" type="email" />
-          </div>
-          <Field label="Subject" placeholder="What's it about?" />
-          <div>
-            <label className="block text-xs text-foreground-subtle uppercase tracking-wider mb-2">
-              Topic
-            </label>
-            <select className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
-              <option>General inquiry</option>
-              <option>Pitch an article</option>
-              <option>Partnerships</option>
-              <option>Press</option>
-              <option>Corrections</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs text-foreground-subtle uppercase tracking-wider mb-2">
-              Message
-            </label>
-            <textarea
-              rows={6}
-              placeholder="Tell us a bit more…"
-              className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none resize-none"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-foreground-subtle">
-              By submitting you agree to our privacy policy.
-            </p>
-            <button type="button" className="btn-primary">
-              Send message
-            </button>
-          </div>
-        </form>
+        <ContactForm />
 
         {/* Info */}
         <aside className="lg:col-span-2 space-y-4">
@@ -161,29 +126,6 @@ export default function ContactPage() {
           ))}
         </div>
       </section>
-    </div>
-  );
-}
-
-function Field({
-  label,
-  placeholder,
-  type = "text",
-}: {
-  label: string;
-  placeholder: string;
-  type?: string;
-}) {
-  return (
-    <div>
-      <label className="block text-xs text-foreground-subtle uppercase tracking-wider mb-2">
-        {label}
-      </label>
-      <input
-        type={type}
-        placeholder={placeholder}
-        className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none placeholder:text-foreground-subtle"
-      />
     </div>
   );
 }

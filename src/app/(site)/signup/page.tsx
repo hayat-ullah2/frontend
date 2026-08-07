@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import AuthTabs from "@/components/auth/AuthTabs";
+import SignupForm from "@/components/auth/SignupForm";
 import { Check, Github, Logo, Sparkles, Twitter } from "@/components/Icon";
 
 export const metadata: Metadata = {
@@ -34,33 +36,8 @@ export default function SignupPage() {
             Free forever. Cancel any time. No credit card required.
           </p>
 
-          <form className="mt-8 space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="First name" placeholder="Ada" />
-              <Field label="Last name" placeholder="Lovelace" />
-            </div>
-            <Field label="Email" type="email" placeholder="you@example.com" />
-            <Field label="Password" type="password" placeholder="At least 8 characters" />
-
-            <label className="flex items-start gap-2 text-xs text-foreground-muted">
-              <input type="checkbox" className="mt-0.5 rounded border-white/20" defaultChecked />
-              <span>
-                I agree to the{" "}
-                <Link href="#" className="text-foreground underline underline-offset-2">
-                  Terms
-                </Link>{" "}
-                and{" "}
-                <Link href="#" className="text-foreground underline underline-offset-2">
-                  Privacy Policy
-                </Link>
-                .
-              </span>
-            </label>
-
-            <button type="button" className="btn-primary w-full">
-              Create account
-            </button>
-          </form>
+          <AuthTabs active="signup" />
+          <SignupForm />
 
           <div className="mt-6 flex items-center gap-3 text-xs text-foreground-subtle">
             <span className="h-px flex-1 bg-white/5" />
@@ -121,25 +98,3 @@ export default function SignupPage() {
   );
 }
 
-function Field({
-  label,
-  type = "text",
-  placeholder,
-}: {
-  label: string;
-  type?: string;
-  placeholder?: string;
-}) {
-  return (
-    <div>
-      <label className="block text-xs uppercase tracking-wider text-foreground-subtle mb-1.5">
-        {label}
-      </label>
-      <input
-        type={type}
-        placeholder={placeholder}
-        className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none placeholder:text-foreground-subtle focus:border-violet-500/40 transition"
-      />
-    </div>
-  );
-}

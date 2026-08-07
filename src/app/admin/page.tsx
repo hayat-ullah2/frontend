@@ -6,32 +6,47 @@ import {
   Eye,
   FileText,
   Heart,
-  MessageSquare,
   Plus,
   TrendUp,
   Users,
 } from "@/components/Icon";
-import { authors, categories, posts } from "@/lib/data";
+import { apiServerSafe } from "@/lib/apiServer";
+import type { ApiCategory, DashboardStats } from "@/lib/models";
 
-const stats = [
-  { label: "Total posts", value: posts.length.toString(), delta: "+12%", icon: FileText },
-  { label: "Total users", value: "8,420", delta: "+4.1%", icon: Users },
-  { label: "Page views", value: "482k", delta: "+18%", icon: Eye },
-  { label: "Engagement", value: "62%", delta: "+2.4%", icon: Heart },
-];
+const EMPTY_STATS: DashboardStats = {
+  users: { total: 0, active: 0 },
+  posts: { total: 0, published: 0, draft: 0, scheduled: 0 },
+  categories: { total: 0 },
+  comments: { pending: 0 },
+  views: 0,
+  likes: 0,
+  recentPosts: [],
+  recentUsers: [],
+};
 
-const traffic = [38, 55, 47, 71, 64, 88, 76, 90, 84, 95, 80, 100];
+export default async function AdminDashboardPage() {
+  const [stats, categories] = await Promise.all([
+    apiServerSafe<DashboardStats>("/stats/dashboard", EMPTY_STATS),
+    apiServerSafe<ApiCategory[]>("/categories", []),
+  ]);
 
-export default function AdminDashboardPage() {
-  const recentPosts = [...posts]
-    .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
+  const statCards = [
+    { label: "Total posts", value: stats.posts.total, sub: `${stats.posts.published} published`, icon: FileText },
+    { label: "Total users", value: stats.users.total, sub: `${stats.users.active} active`, icon: Users },
+    { label: "Page views", value: stats.views, sub: "all time", icon: Eye },
+    { label: "Total likes", value: stats.likes, sub: "across all posts", icon: Heart },
+  ];
+
+  const topCategories = [...categories]
+    .sort((a, b) => b.postCount - a.postCount)
     .slice(0, 5);
+  const maxCat = Math.max(1, ...topCategories.map((c) => c.postCount));
 
   return (
     <>
       <Topbar
         title="Dashboard"
-        subtitle="Welcome back — here's what happened this week."
+        subtitle="Welcome back — here's what's live in production."
         action={
           <Link href="/admin/blogs/new" className="btn-primary text-sm">
             <Plus size={14} /> New post
@@ -40,9 +55,8 @@ export default function AdminDashboardPage() {
       />
 
       <div className="p-6 space-y-6">
-        {/* Stat cards */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((s) => {
+          {statCards.map((s) => {
             const Icon = s.icon;
             return (
               <div key={s.label} className="card p-5">
@@ -54,40 +68,50 @@ export default function AdminDashboardPage() {
                     <Icon size={16} />
                   </div>
                 </div>
-                <p className="mt-3 text-3xl font-bold tracking-tight">{s.value}</p>
-                <p className="mt-1 text-xs text-emerald-400 flex items-center gap-1">
-                  <TrendUp size={12} /> {s.delta} this week
+                <p className="mt-3 text-3xl font-bold tracking-tight">
+                  {formatNum(s.value)}
                 </p>
+                <p className="mt-1 text-xs text-foreground-subtle">{s.sub}</p>
               </div>
             );
           })}
         </div>
 
-        {/* Chart + Top categories */}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="card p-6 lg:col-span-2">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="font-semibold">Traffic</h2>
+                <h2 className="font-semibold">Content health</h2>
                 <p className="text-xs text-foreground-subtle">
-                  Page views over the last 12 weeks
+                  Posts by status across the workspace
                 </p>
               </div>
-              <select className="bg-background border border-white/5 rounded-lg px-3 py-1.5 text-xs">
-                <option>Last 12 weeks</option>
-                <option>Last 30 days</option>
-                <option>Last 7 days</option>
-              </select>
+              <span className="chip">
+                <TrendUp size={12} /> Live
+              </span>
             </div>
-            <div className="mt-6 h-56 flex items-end gap-2">
-              {traffic.map((v, i) => (
-                <div
-                  key={i}
-                  className="flex-1 rounded-md bg-gradient-to-t from-violet-500/60 to-blue-500/60 hover:from-violet-500 hover:to-blue-500 transition"
-                  style={{ height: `${v}%` }}
-                  title={`${v}k views`}
-                />
-              ))}
+            <div className="mt-6 grid grid-cols-3 gap-6">
+              <Pill label="Published" value={stats.posts.published} tone="success" />
+              <Pill label="Draft" value={stats.posts.draft} tone="warning" />
+              <Pill label="Scheduled" value={stats.posts.scheduled} tone="info" />
+            </div>
+            <div className="mt-6 pt-6 border-t border-white/5 grid grid-cols-2 gap-6">
+              <div>
+                <p className="text-xs text-foreground-subtle uppercase tracking-wider">
+                  Comments pending review
+                </p>
+                <p className="mt-1 text-2xl font-bold">
+                  {stats.comments.pending}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-foreground-subtle uppercase tracking-wider">
+                  Categories
+                </p>
+                <p className="mt-1 text-2xl font-bold">
+                  {stats.categories.total}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -95,110 +119,116 @@ export default function AdminDashboardPage() {
             <h2 className="font-semibold">Top categories</h2>
             <p className="text-xs text-foreground-subtle">by published posts</p>
             <div className="mt-5 space-y-4">
-              {categories.slice(0, 5).map((c) => {
-                const pct = Math.min(100, Math.round((c.postCount / 60) * 100));
-                return (
-                  <div key={c.slug}>
-                    <div className="flex items-center justify-between text-sm">
-                      <span>{c.name}</span>
-                      <span className="text-foreground-subtle">{c.postCount}</span>
-                    </div>
-                    <div className="mt-2 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full bg-gradient-to-r ${c.color}`}
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
+              {topCategories.length === 0 && (
+                <p className="text-xs text-foreground-subtle">No categories yet.</p>
+              )}
+              {topCategories.map((c) => (
+                <div key={c._id}>
+                  <div className="flex items-center justify-between text-sm">
+                    <span>{c.name}</span>
+                    <span className="text-foreground-subtle">{c.postCount}</span>
                   </div>
-                );
-              })}
+                  <div className="mt-2 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full bg-gradient-to-r ${c.color}`}
+                      style={{ width: `${(c.postCount / maxCat) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Recent posts + activity */}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="card lg:col-span-2 overflow-hidden">
             <div className="flex items-center justify-between p-5 border-b border-white/5">
               <div>
                 <h2 className="font-semibold">Recent posts</h2>
                 <p className="text-xs text-foreground-subtle">
-                  Latest 5 articles published
+                  Latest articles published
                 </p>
               </div>
-              <Link href="/admin/blogs" className="text-xs text-foreground-muted hover:text-foreground inline-flex items-center gap-1">
+              <Link
+                href="/admin/blogs"
+                className="text-xs text-foreground-muted hover:text-foreground inline-flex items-center gap-1"
+              >
                 See all <ArrowRight size={12} />
               </Link>
             </div>
-            <table className="w-full text-sm">
-              <thead className="text-xs text-foreground-subtle">
-                <tr className="border-b border-white/5">
-                  <th className="text-left p-4 font-medium">Title</th>
-                  <th className="text-left p-4 font-medium hidden sm:table-cell">Category</th>
-                  <th className="text-left p-4 font-medium hidden md:table-cell">Author</th>
-                  <th className="text-right p-4 font-medium">Views</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentPosts.map((p) => {
-                  const author = authors.find((a) => a.slug === p.authorSlug);
-                  const cat = categories.find((c) => c.slug === p.category);
-                  return (
-                    <tr key={p.slug} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02]">
+            {stats.recentPosts.length === 0 ? (
+              <div className="p-10 text-center text-foreground-subtle text-sm">
+                No posts yet. <Link href="/admin/blogs/new" className="text-foreground underline underline-offset-2">Create one</Link>.
+              </div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="text-xs text-foreground-subtle">
+                  <tr className="border-b border-white/5">
+                    <th className="text-left p-4 font-medium">Title</th>
+                    <th className="text-left p-4 font-medium hidden sm:table-cell">Category</th>
+                    <th className="text-left p-4 font-medium hidden md:table-cell">Author</th>
+                    <th className="text-right p-4 font-medium">Views</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats.recentPosts.map((p) => (
+                    <tr key={p._id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02]">
                       <td className="p-4">
                         <p className="font-medium line-clamp-1">{p.title}</p>
                         <p className="text-xs text-foreground-subtle">
-                          {new Date(p.publishedAt).toLocaleDateString()}
+                          {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString() : "—"}
                         </p>
                       </td>
                       <td className="p-4 hidden sm:table-cell">
-                        <span className="chip">{cat?.name}</span>
+                        <span className="chip">{p.category?.name}</span>
                       </td>
-                      <td className="p-4 hidden md:table-cell">
-                        <div className="flex items-center gap-2">
-                          {author && (
-                            <Image
-                              src={author.avatar}
-                              alt={author.name}
-                              width={24}
-                              height={24}
-                              className="rounded-full"
-                            />
-                          )}
-                          <span className="text-xs">{author?.name}</span>
-                        </div>
+                      <td className="p-4 hidden md:table-cell text-xs">
+                        {p.author?.name}
                       </td>
                       <td className="p-4 text-right text-foreground-muted">
-                        {(p.views / 1000).toFixed(1)}k
+                        {formatNum(p.views)}
                       </td>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
 
-          <div className="card p-6 space-y-5">
-            <h2 className="font-semibold">Recent activity</h2>
-            <div className="space-y-4 text-sm">
-              {[
-                { who: "Priya Shah", what: "published", what2: "The quiet revolution of agentic LLMs", when: "2h ago" },
-                { who: "Alex Rivera", what: "drafted", what2: "Building resilient edge APIs", when: "5h ago" },
-                { who: "Lena Fischer", what: "edited", what2: "Pricing is strategy", when: "Yesterday" },
-                { who: "Marcus Chen", what: "moderated", what2: "12 comments", when: "Yesterday" },
-                { who: "Sara Kowalski", what: "scheduled", what2: "The traveler's kit", when: "2 days ago" },
-              ].map((a, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-gradient-accent text-white text-[10px] font-bold grid place-items-center flex-shrink-0">
-                    {a.who.split(" ").map((s) => s[0]).join("")}
-                  </div>
+          <div className="card p-6">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold">New users</h2>
+              <Link href="/admin/users" className="text-xs text-foreground-muted hover:text-foreground">
+                All users →
+              </Link>
+            </div>
+            <p className="text-xs text-foreground-subtle">Recent sign-ups</p>
+            <div className="mt-5 space-y-3">
+              {stats.recentUsers.length === 0 && (
+                <p className="text-xs text-foreground-subtle">No users yet.</p>
+              )}
+              {stats.recentUsers.map((u) => (
+                <div key={u._id} className="flex items-center gap-3">
+                  {u.avatar ? (
+                    <Image
+                      src={u.avatar}
+                      alt={u.name}
+                      width={32}
+                      height={32}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gradient-accent grid place-items-center text-white text-xs font-bold">
+                      {initials(u.name)}
+                    </div>
+                  )}
                   <div className="min-w-0">
-                    <p className="text-foreground-muted">
-                      <span className="text-foreground font-medium">{a.who}</span> {a.what}{" "}
-                      <span className="text-foreground">{a.what2}</span>
-                    </p>
-                    <p className="text-xs text-foreground-subtle">{a.when}</p>
+                    <p className="text-sm font-medium truncate">{u.name}</p>
+                    <p className="text-xs text-foreground-subtle truncate">{u.email}</p>
                   </div>
+                  <span className="ml-auto text-[10px] uppercase tracking-wider text-foreground-subtle">
+                    {u.role}
+                  </span>
                 </div>
               ))}
             </div>
@@ -206,5 +236,41 @@ export default function AdminDashboardPage() {
         </div>
       </div>
     </>
+  );
+}
+
+function formatNum(n: number) {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
+  return n.toString();
+}
+
+function initials(name: string) {
+  return name
+    .split(" ")
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+function Pill({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone: "success" | "warning" | "info";
+}) {
+  const map = {
+    success: "text-emerald-300 bg-emerald-500/10 border-emerald-500/20",
+    warning: "text-amber-300 bg-amber-500/10 border-amber-500/20",
+    info: "text-blue-300 bg-blue-500/10 border-blue-500/20",
+  } as const;
+  return (
+    <div className={`rounded-xl border p-4 ${map[tone]}`}>
+      <p className="text-xs uppercase tracking-wider opacity-80">{label}</p>
+      <p className="mt-1 text-2xl font-bold">{value}</p>
+    </div>
   );
 }

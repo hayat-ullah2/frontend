@@ -1,7 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import { ApiError } from "@/lib/api";
+import { logout } from "@/lib/auth";
+import type { ApiUser } from "@/lib/models";
 import {
   BarChart,
   FileText,
@@ -22,8 +27,23 @@ const items = [
   { href: "/admin/seo", label: "SEO", icon: Settings },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ user }: { user: ApiUser | null }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [signingOut, setSigningOut] = useState(false);
+
+  async function handleLogout() {
+    setSigningOut(true);
+    try {
+      await logout();
+    } catch (err) {
+      if (!(err instanceof ApiError)) console.warn(err);
+    } finally {
+      router.refresh();
+      router.push("/");
+    }
+  }
+
   return (
     <aside className="hidden lg:flex w-64 flex-col border-r border-white/5 bg-background-elev/40 backdrop-blur-md sticky top-0 h-screen">
       <div className="px-5 py-5 border-b border-white/5">
@@ -70,17 +90,54 @@ export default function Sidebar() {
           <Home size={16} /> Back to site
         </Link>
       </nav>
-      <div className="p-3 border-t border-white/5">
-        <div className="flex items-center gap-3 px-2 py-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-accent grid place-items-center text-white text-xs font-bold">
-            NX
-          </div>
-          <div className="text-xs">
-            <p className="font-medium text-foreground">Nexus Admin</p>
-            <p className="text-foreground-subtle">admin@nexblog.com</p>
-          </div>
-        </div>
+      <div className="p-3 border-t border-white/5 space-y-2">
+        {user ? (
+          <>
+            <div className="flex items-center gap-3 px-2 py-2">
+              {user.avatar ? (
+                <Image
+                  src={user.avatar}
+                  alt={user.name}
+                  width={32}
+                  height={32}
+                  className="rounded-full object-cover h-8 w-8"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gradient-accent grid place-items-center text-white text-xs font-bold">
+                  {initials(user.name)}
+                </div>
+              )}
+              <div className="text-xs min-w-0">
+                <p className="font-medium text-foreground truncate">{user.name}</p>
+                <p className="text-foreground-subtle truncate">{user.email}</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleLogout}
+              disabled={signingOut}
+              className="w-full text-center text-xs py-2 rounded-lg border border-rose-500/30 text-rose-300 hover:bg-rose-500/10 transition disabled:opacity-60"
+            >
+              {signingOut ? "Signing out…" : "Log out"}
+            </button>
+          </>
+        ) : (
+          <Link
+            href="/login"
+            className="block text-center text-xs py-2 rounded-lg border border-white/10 text-foreground-muted hover:text-foreground hover:bg-white/5"
+          >
+            Log in
+          </Link>
+        )}
       </div>
     </aside>
   );
+}
+
+function initials(name: string) {
+  return name
+    .split(" ")
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? "")
+    .join("");
 }
