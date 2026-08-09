@@ -157,21 +157,23 @@ export default async function HomePage() {
                     />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                  <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
+                    {featured.category && (
+                      <span className="chip-accent">{featured.category.name}</span>
+                    )}
+                    <span className="chip">Featured</span>
+                  </div>
                 </div>
-                <div className="absolute top-5 left-5 flex items-center gap-2">
-                  {featured.category && (
-                    <span className="chip-accent">{featured.category.name}</span>
-                  )}
-                  <span className="chip">Featured</span>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+                {/* On mobile the text sits BELOW the image so it can never overlap
+                    the category chips; on sm+ it overlays the bottom of the image. */}
+                <div className="relative p-6 bg-background sm:bg-transparent sm:absolute sm:bottom-0 sm:left-0 sm:right-0 sm:p-8">
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight max-w-2xl leading-tight">
                     {featured.title}
                   </h2>
                   <p className="mt-3 text-foreground-muted max-w-xl line-clamp-2">
                     {featured.excerpt}
                   </p>
-                  <div className="mt-5 flex flex-wrap items-center gap-5 text-sm">
+                  <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
                     <span>{featured.author?.name}</span>
                     <span className="flex items-center gap-1 text-foreground-subtle">
                       <Clock size={14} /> {featured.readingTime} min read
