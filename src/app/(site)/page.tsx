@@ -293,13 +293,9 @@ export default async function HomePage() {
           />
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
             {authors.map((a) => (
-              <Link
-                key={a._id}
-                href={`/author/${a._id}`}
-                className="card p-6 text-center group"
-              >
+              <div key={a._id} className="card p-6 text-center">
                 {a.avatar ? (
-                  <div className="relative mx-auto w-20 h-20 rounded-full overflow-hidden ring-2 ring-white/5 group-hover:ring-violet-500/40 transition">
+                  <div className="relative mx-auto w-20 h-20 rounded-full overflow-hidden ring-2 ring-white/5">
                     <Image src={a.avatar} alt={a.name} fill sizes="80px" className="object-cover" />
                   </div>
                 ) : (
@@ -309,7 +305,7 @@ export default async function HomePage() {
                 )}
                 <h3 className="mt-4 font-semibold">{a.name}</h3>
                 <p className="text-xs text-foreground-subtle">Author</p>
-              </Link>
+              </div>
             ))}
           </div>
         </section>
