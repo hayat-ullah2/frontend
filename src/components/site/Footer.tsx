@@ -39,7 +39,7 @@ export default function Footer() {
             <Link href="/" className="flex items-center gap-2">
               <Logo size={28} />
               <span className="font-bold text-xl tracking-tight">
-                <span className="text-gradient-accent">Nex</span>Blog
+                <span className="text-gradient-accent">Nex</span>versal
               </span>
             </Link>
             <p className="mt-4 text-sm text-foreground-muted max-w-sm leading-relaxed">
@@ -80,7 +80,7 @@ export default function Footer() {
 
         <div className="mt-12 pt-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-xs text-foreground-subtle">
-            © {new Date().getFullYear()} NexBlog. All rights reserved.
+            © {new Date().getFullYear()} Nexversal. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs text-foreground-subtle">
             <Link href="#">Privacy</Link>

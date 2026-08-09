@@ -50,7 +50,7 @@ export default function Sidebar({ user }: { user: ApiUser | null }) {
         <Link href="/admin" className="flex items-center gap-2">
           <Logo size={24} />
           <span className="font-bold tracking-tight">
-            <span className="text-gradient-accent">Nex</span>Admin
+            <span className="text-gradient-accent">Nex</span>versal
           </span>
         </Link>
       </div>

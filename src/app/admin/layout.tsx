@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Admin",
-  description: "NexBlog admin panel",
+  description: "Nexversal admin panel",
   robots: { index: false, follow: false },
 };
 

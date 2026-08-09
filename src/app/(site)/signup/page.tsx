@@ -6,13 +6,13 @@ import { Check, Github, Logo, Sparkles, Twitter } from "@/components/Icon";
 
 export const metadata: Metadata = {
   title: "Create account",
-  description: "Join NexBlog — long-form essays for curious minds.",
+  description: "Join Nexversal — long-form essays for curious minds.",
 };
 
 const perks = [
   "Weekly digest with one handpicked essay",
   "Early access to long-form drops",
-  "Private archive of every NexBlog issue",
+  "Private archive of every Nexversal issue",
   "Comment, bookmark, and follow authors",
 ];
 
@@ -25,7 +25,7 @@ export default function SignupPage() {
           <Link href="/" className="flex items-center gap-2">
             <Logo size={26} />
             <span className="font-bold text-lg tracking-tight">
-              <span className="text-gradient-accent">Nex</span>Blog
+              <span className="text-gradient-accent">Nex</span>versal
             </span>
           </Link>
 
@@ -80,7 +80,7 @@ export default function SignupPage() {
             Long-form for the <span className="text-gradient-accent">curious.</span>
           </h2>
           <p className="mt-4 text-foreground-muted text-sm leading-relaxed">
-            NexBlog is a small, opinionated publication — depth over volume, trust over reach.
+            Nexversal is a small, opinionated publication — depth over volume, trust over reach.
           </p>
           <ul className="mt-8 space-y-3">
             {perks.map((p) => (

@@ -6,7 +6,7 @@ import { Github, Logo, Mail, Twitter } from "@/components/Icon";
 
 export const metadata: Metadata = {
   title: "Log in",
-  description: "Sign in to your NexBlog account.",
+  description: "Sign in to your Nexversal account.",
 };
 
 export default function LoginPage() {
@@ -18,7 +18,7 @@ export default function LoginPage() {
           <Link href="/" className="flex items-center gap-2">
             <Logo size={26} />
             <span className="font-bold text-lg tracking-tight">
-              <span className="text-gradient-accent">Nex</span>Blog
+              <span className="text-gradient-accent">Nex</span>versal
             </span>
           </Link>
 
@@ -49,7 +49,7 @@ export default function LoginPage() {
           </div>
 
           <p className="mt-8 text-sm text-foreground-muted text-center">
-            New to NexBlog?{" "}
+            New to Nexversal?{" "}
             <Link href="/signup" className="text-gradient-accent font-medium">
               Create an account
             </Link>
@@ -75,7 +75,7 @@ export default function LoginPage() {
           </h2>
           <p className="mt-4 text-foreground-muted text-sm leading-relaxed">
             Members get the weekly digest, early access to long-form essays, and the
-            private archive of every NexBlog issue.
+            private archive of every Nexversal issue.
           </p>
           <div className="mt-8 flex items-center gap-3 text-xs text-foreground-subtle">
             <span className="chip">No spam</span>

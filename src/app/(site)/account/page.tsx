@@ -8,7 +8,7 @@ import type { ApiUser } from "@/lib/models";
 
 export const metadata: Metadata = {
   title: "Your account",
-  description: "Manage your NexBlog profile.",
+  description: "Manage your Nexversal profile.",
 };
 
 export default async function AccountPage() {

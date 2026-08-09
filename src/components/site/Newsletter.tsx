@@ -49,7 +49,7 @@ export default function Newsletter({ source = "site" }: { source?: string }) {
             <Sparkles size={12} /> Weekly digest
           </span>
           <h2 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight">
-            The best of NexBlog,{" "}
+            The best of Nexversal,{" "}
             <span className="text-gradient-accent">delivered Sundays.</span>
           </h2>
           <p className="mt-3 text-foreground-muted max-w-md">

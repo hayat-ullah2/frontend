@@ -7,7 +7,7 @@ import { authors } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Who we are, what we publish, and why we built NexBlog.",
+  description: "Who we are, what we publish, and why we built Nexversal.",
 };
 
 const values = [
@@ -17,7 +17,7 @@ const values = [
 ];
 
 const milestones = [
-  { year: "2023", text: "NexBlog founded as a side-project newsletter." },
+  { year: "2023", text: "Nexversal founded as a side-project newsletter." },
   { year: "2024", text: "Crossed 100k monthly readers; brought on three full-time editors." },
   { year: "2025", text: "Launched the writers' program and the open editorial calendar." },
   { year: "2026", text: "Half a million monthly readers across 14 niches." },
@@ -43,7 +43,7 @@ export default function AboutPage() {
             We publish ideas that <span className="text-gradient-accent">earn the page.</span>
           </h1>
           <p className="mt-5 text-foreground-muted text-lg max-w-2xl mx-auto">
-            NexBlog is a small, opinionated publication covering technology, AI, business,
+            Nexversal is a small, opinionated publication covering technology, AI, business,
             finance and the lives we build around them. We choose depth over volume and
             trust over reach.
           </p>
@@ -70,7 +70,7 @@ export default function AboutPage() {
               prose that respects the reader's time.
             </p>
             <p className="mt-3 text-foreground-muted leading-relaxed">
-              NexBlog exists to publish the long-form work the internet rewards
+              Nexversal exists to publish the long-form work the internet rewards
               the least and needs the most.
             </p>
             <div className="mt-8 grid grid-cols-3 gap-6">
@@ -164,7 +164,7 @@ export default function AboutPage() {
       {/* Contact strip */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="card p-8 grid sm:grid-cols-3 gap-6">
-          <Info icon={<Mail size={18} />} label="Email" value="hello@nexblog.com" />
+          <Info icon={<Mail size={18} />} label="Email" value="hello@nexversal.com" />
           <Info icon={<Phone size={18} />} label="Phone" value="+41 22 555 0142" />
           <Info icon={<MapPin size={18} />} label="HQ" value="Zürich, Switzerland" />
         </div>

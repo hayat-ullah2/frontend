@@ -91,7 +91,7 @@ export default function Navbar({ user }: { user: NavUser | null }) {
           <Link href="/" className="flex items-center gap-2 group">
             <Logo size={26} />
             <span className="font-bold text-lg tracking-tight">
-              <span className="text-gradient-accent">Nex</span>Blog
+              <span className="text-gradient-accent">Nex</span>versal
             </span>
           </Link>
 

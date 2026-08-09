@@ -12,21 +12,21 @@ import {
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with the NexBlog team.",
+  description: "Get in touch with the Nexversal team.",
 };
 
 const faqs = [
   {
     q: "How can I pitch an article?",
-    a: "Send a one-paragraph pitch to pitches@nexblog.com. We respond to every pitch within five business days, whether we take it or not.",
+    a: "Send a one-paragraph pitch to pitches@nexversal.com. We respond to every pitch within five business days, whether we take it or not.",
   },
   {
     q: "Do you pay writers?",
     a: "Yes. Our standard rate is $0.40 per word, with bonuses for evergreen pieces that continue performing six months in.",
   },
   {
-    q: "Can I republish a NexBlog article?",
-    a: "For non-commercial use with attribution, yes. For commercial syndication, please email partnerships@nexblog.com.",
+    q: "Can I republish a Nexversal article?",
+    a: "For non-commercial use with attribution, yes. For commercial syndication, please email partnerships@nexversal.com.",
   },
   {
     q: "How do you choose what to cover?",
@@ -34,7 +34,7 @@ const faqs = [
   },
   {
     q: "Where can I report a correction?",
-    a: "Use the correction link at the bottom of any article, or email corrections@nexblog.com. We aim to update within 24 hours.",
+    a: "Use the correction link at the bottom of any article, or email corrections@nexversal.com. We aim to update within 24 hours.",
   },
 ];
 
@@ -73,7 +73,7 @@ export default function ContactPage() {
           <div className="card p-6">
             <h3 className="font-semibold">Direct lines</h3>
             <div className="mt-4 space-y-4">
-              <Line icon={<Mail size={16} />} label="Email" value="hello@nexblog.com" />
+              <Line icon={<Mail size={16} />} label="Email" value="hello@nexversal.com" />
               <Line icon={<Phone size={16} />} label="Phone" value="+41 22 555 0142" />
               <Line icon={<MapPin size={16} />} label="Office" value="Limmatquai 12, 8001 Zürich" />
             </div>
@@ -81,7 +81,7 @@ export default function ContactPage() {
           <div className="card p-6">
             <h3 className="font-semibold">Follow along</h3>
             <p className="text-sm text-foreground-muted mt-1">
-              The same NexBlog, in shorter form.
+              The same Nexversal, in shorter form.
             </p>
             <div className="mt-4 flex items-center gap-2">
               <a className="btn-ghost p-2" href="#" aria-label="Twitter">
