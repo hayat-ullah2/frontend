@@ -25,7 +25,6 @@ export default function Footer() {
       links: [
         { href: "/blog?sort=trending", label: "Trending" },
         { href: "/blog?sort=latest", label: "Latest" },
-        { href: "/admin", label: "Admin Panel" },
         { href: "/contact", label: "Become a writer" },
       ],
     },
