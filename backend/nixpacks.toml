@@ -1,0 +1,15 @@
+# Railway / Nixpacks build config for the NexBlog backend.
+#
+# Nixpacks sets NODE_ENV=production, which makes `npm ci` skip devDependencies.
+# `typescript` + `@types/*` live in devDependencies and are needed to compile,
+# so we force them in with `--include=dev`. Runtime still runs plain `node`.
+providers = ["node"]
+
+[phases.install]
+cmds = ["npm ci --include=dev"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npm run start"
