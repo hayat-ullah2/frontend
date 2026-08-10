@@ -139,7 +139,10 @@ export async function getPost(req: Request, res: Response) {
     .populate("tags", "name slug");
   if (!post) throw ApiError.notFound("Post not found");
 
-  await Post.updateOne({ _id: post._id }, { $inc: { views: 1 } });
+  // NB: views are no longer incremented here. The single-post page is rendered
+  // statically (ISR), so a server GET happens only on revalidation — not per
+  // visitor. Per-visit view counting lives in `registerView` below, which the
+  // client calls once on mount.
 
   // Add per-viewer flags without exposing the full likedBy / bookmarkedBy
   // arrays (those could reveal who else liked what).
@@ -154,6 +157,37 @@ export async function getPost(req: Request, res: Response) {
   delete (json as { bookmarkedBy?: unknown }).bookmarkedBy;
 
   res.json({ success: true, data: { ...json, viewerLiked, viewerBookmarked } });
+}
+
+/**
+ * Client-side "a human viewed this post" beacon. Increments the view counter
+ * once per visit and returns the viewer-relative state the client needs to
+ * hydrate the like/bookmark buttons — none of which can come from the
+ * statically-rendered page. `authOptional`: anonymous visitors still count.
+ */
+export async function registerView(req: Request, res: Response) {
+  const post = await Post.findOne({ slug: req.params.slug }).select(
+    "likes commentCount likedBy bookmarkedBy",
+  );
+  if (!post) throw ApiError.notFound("Post not found");
+
+  await Post.updateOne({ _id: post._id }, { $inc: { views: 1 } });
+
+  const viewerId = req.user?.sub;
+  const likedBy = (post.get("likedBy") ?? []) as unknown as string[];
+  const bookmarkedBy = (post.get("bookmarkedBy") ?? []) as unknown as string[];
+
+  res.json({
+    success: true,
+    data: {
+      authed: !!viewerId,
+      liked: !!viewerId && likedBy.some((id) => String(id) === viewerId),
+      bookmarked:
+        !!viewerId && bookmarkedBy.some((id) => String(id) === viewerId),
+      likes: post.get("likes") ?? 0,
+      commentCount: post.get("commentCount") ?? 0,
+    },
+  });
 }
 
 async function toggleSet(

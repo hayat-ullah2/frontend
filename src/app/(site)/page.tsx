@@ -12,7 +12,7 @@ import {
   TrendUp,
   Users,
 } from "@/components/Icon";
-import { apiServerSafe } from "@/lib/apiServer";
+import { apiPublicSafe } from "@/lib/apiServer";
 import type { ApiCategory, ApiPost, ApiTag } from "@/lib/models";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
@@ -52,9 +52,9 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const [posts, categories, tags] = await Promise.all([
-    apiServerSafe<ApiPost[]>("/posts?limit=20", []),
-    apiServerSafe<ApiCategory[]>("/categories", []),
-    apiServerSafe<ApiTag[]>("/tags", []),
+    apiPublicSafe<ApiPost[]>("/posts?limit=20", []),
+    apiPublicSafe<ApiCategory[]>("/categories", []),
+    apiPublicSafe<ApiTag[]>("/tags", []),
   ]);
 
   // Featured authors = unique authors of recently published posts.

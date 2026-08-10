@@ -2,14 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { ApiError } from "@/lib/api";
+import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { api, ApiError } from "@/lib/api";
 import { logout } from "@/lib/auth";
+import type { ApiUser } from "@/lib/models";
 import { Close, Logo, Menu, Search, User } from "../Icon";
 
-// Minimal, safe-to-serialize user shape. Never include role/email/bio here —
-// these props get baked into the public HTML payload.
+// Minimal user shape kept in client state. Admins are deliberately excluded
+// (see fetch below) so the public site never reveals their identity.
 type NavUser = { _id: string; name: string; avatar?: string };
 
 const NAV_LINKS = [
@@ -22,14 +23,37 @@ const NAV_LINKS = [
   { href: "/contact", label: "Contact" },
 ];
 
-export default function Navbar({ user }: { user: NavUser | null }) {
+export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
+  const [user, setUser] = useState<NavUser | null>(null);
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [signingOut, setSigningOut] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // The public site is statically rendered, so the signed-in user is resolved
+  // on the client. Re-run on navigation so login/logout elsewhere is reflected.
+  const refreshUser = useCallback(async () => {
+    try {
+      const me = await api<ApiUser>("/auth/me");
+      // Admins are intentionally treated as anonymous on the public site.
+      setUser(
+        me && me.role !== "admin"
+          ? { _id: me._id, name: me.name, avatar: me.avatar }
+          : null,
+      );
+    } catch {
+      // 401 (anonymous) or a transient failure — show the logged-out UI.
+      setUser(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshUser();
+  }, [refreshUser, pathname]);
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -45,6 +69,7 @@ export default function Navbar({ user }: { user: NavUser | null }) {
     } catch (err) {
       if (!(err instanceof ApiError)) console.warn(err);
     } finally {
+      setUser(null);
       setMenuOpen(false);
       setOpen(false);
       setSigningOut(false);

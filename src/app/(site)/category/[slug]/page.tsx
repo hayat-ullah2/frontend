@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import ArticleCard from "@/components/site/ArticleCard";
 import JsonLd from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight, Filter } from "@/components/Icon";
-import { apiServer, apiServerSafe } from "@/lib/apiServer";
+import { apiPublic, apiPublicSafe } from "@/lib/apiServer";
 import { ApiError } from "@/lib/api";
 import type { ApiCategory, ApiPost } from "@/lib/models";
 import { breadcrumbSchema, collectionPageSchema } from "@/lib/schema";
@@ -23,7 +23,7 @@ export async function generateMetadata(
   const page = Math.max(1, Number(first(sp.page) ?? 1));
 
   try {
-    const cat = await apiServer<ApiCategory>(`/categories/${slug}`);
+    const cat = await apiPublic<ApiCategory>(`/categories/${slug}`);
     const canonicalPath =
       page > 1 ? `/category/${slug}?page=${page}` : `/category/${slug}`;
     const title =
@@ -69,15 +69,15 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
 
   let category: ApiCategory;
   try {
-    category = await apiServer<ApiCategory>(`/categories/${slug}`);
+    category = await apiPublic<ApiCategory>(`/categories/${slug}`);
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) notFound();
     throw err;
   }
 
   const [posts, allCategories] = await Promise.all([
-    apiServerSafe<ApiPost[]>(`/posts?category=${category._id}&limit=1000`, []),
-    apiServerSafe<ApiCategory[]>("/categories", []),
+    apiPublicSafe<ApiPost[]>(`/posts?category=${category._id}&limit=1000`, []),
+    apiPublicSafe<ApiCategory[]>("/categories", []),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { apiServerSafe } from "@/lib/apiServer";
+import { apiPublicSafe } from "@/lib/apiServer";
 import type { ApiCategory, ApiPost } from "@/lib/models";
 import { absoluteUrl } from "@/lib/site";
 
@@ -8,8 +8,8 @@ export const revalidate = 300;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [posts, categories] = await Promise.all([
-    apiServerSafe<ApiPost[]>("/posts?limit=1000&status=published", []),
-    apiServerSafe<ApiCategory[]>("/categories", []),
+    apiPublicSafe<ApiPost[]>("/posts?limit=1000&status=published", []),
+    apiPublicSafe<ApiCategory[]>("/categories", []),
   ]);
 
   const now = new Date();

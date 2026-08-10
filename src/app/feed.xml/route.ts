@@ -1,4 +1,4 @@
-import { apiServerSafe } from "@/lib/apiServer";
+import { apiPublicSafe } from "@/lib/apiServer";
 import type { ApiPost } from "@/lib/models";
 import { SITE_AUTHOR, SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
 
@@ -18,7 +18,7 @@ function esc(s: string | undefined): string {
 }
 
 export async function GET() {
-  const posts = await apiServerSafe<ApiPost[]>(
+  const posts = await apiPublicSafe<ApiPost[]>(
     "/posts?limit=20&status=published",
     [],
   );

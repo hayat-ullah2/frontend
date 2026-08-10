@@ -2,33 +2,50 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ApiError } from "@/lib/api";
-import { toggleBookmark, toggleLike } from "@/lib/posts";
+import { registerView, toggleBookmark, toggleLike } from "@/lib/posts";
 import { Bookmark, Heart, MessageSquare } from "@/components/Icon";
 
 type Props = {
   slug: string;
   initialLikes: number;
   initialCommentCount: number;
-  initialLiked: boolean;
-  initialBookmarked: boolean;
-  isAuthed: boolean;
 };
 
 export default function PostActions({
   slug,
   initialLikes,
   initialCommentCount,
-  initialLiked,
-  initialBookmarked,
-  isAuthed,
 }: Props) {
   const router = useRouter();
   const [likes, setLikes] = useState(initialLikes);
-  const [liked, setLiked] = useState(initialLiked);
-  const [bookmarked, setBookmarked] = useState(initialBookmarked);
+  const [commentCount, setCommentCount] = useState(initialCommentCount);
+  const [liked, setLiked] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  // The page is statically rendered, so per-viewer state is resolved on the
+  // client. `registerView` also records the visit's view count.
+  const [isAuthed, setIsAuthed] = useState(false);
   const [busy, setBusy] = useState<"like" | "bookmark" | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    registerView(slug)
+      .then((s) => {
+        if (cancelled) return;
+        setIsAuthed(s.authed);
+        setLiked(s.liked);
+        setBookmarked(s.bookmarked);
+        setLikes(s.likes);
+        setCommentCount(s.commentCount);
+      })
+      .catch(() => {
+        /* view beacon / state fetch is best-effort */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
 
   async function handleLike() {
     if (!isAuthed) {
@@ -105,7 +122,7 @@ export default function PostActions({
       >
         <MessageSquare size={16} />
         <span className="absolute -bottom-4 text-[10px] text-foreground-subtle">
-          {initialCommentCount}
+          {commentCount}
         </span>
       </Link>
 

@@ -10,9 +10,9 @@ import PostActions from "@/components/site/PostActions";
 import ReadingProgress from "@/components/site/ReadingProgress";
 import ShareButton from "@/components/site/ShareButton";
 import { Clock, Eye, Linkedin, Twitter } from "@/components/Icon";
-import { apiServer, apiServerSafe } from "@/lib/apiServer";
+import { apiPublic, apiPublicSafe } from "@/lib/apiServer";
 import { ApiError } from "@/lib/api";
-import type { ApiComment, ApiPost, ApiUser } from "@/lib/models";
+import type { ApiComment, ApiPost } from "@/lib/models";
 import { blogPostingSchema, breadcrumbSchema } from "@/lib/schema";
 import { SITE_NAME, absoluteUrl } from "@/lib/site";
 
@@ -23,7 +23,7 @@ export const revalidate = 300;
 // P4.14 — Prebuild the 50 most recent posts at build time. Older posts are
 // generated on-demand and then cached.
 export async function generateStaticParams() {
-  const posts = await apiServerSafe<ApiPost[]>(
+  const posts = await apiPublicSafe<ApiPost[]>(
     "/posts?limit=50&status=published",
     [],
   );
@@ -35,7 +35,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await props.params;
   try {
-    const post = await apiServer<ApiPost>(`/posts/${slug}`);
+    const post = await apiPublic<ApiPost>(`/posts/${slug}`);
     const url = absoluteUrl(`/blog/${slug}`);
     const cover = post.cover ? [post.cover] : [absoluteUrl(`/blog/${slug}/opengraph-image`)];
     return {
@@ -72,19 +72,17 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
   const { slug } = await props.params;
   let post: ApiPost;
   try {
-    post = await apiServer<ApiPost>(`/posts/${slug}`);
+    post = await apiPublic<ApiPost>(`/posts/${slug}`);
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) notFound();
     throw err;
   }
 
-  const [related, comments, me] = await Promise.all([
-    apiServerSafe<ApiPost[]>(`/posts?category=${post.category._id}&limit=4`, []),
-    apiServerSafe<ApiComment[]>(`/posts/${slug}/comments`, []).catch(() => [] as ApiComment[]),
-    apiServerSafe<ApiUser | null>("/auth/me", null),
+  const [related, comments] = await Promise.all([
+    apiPublicSafe<ApiPost[]>(`/posts?category=${post.category._id}&limit=4`, []),
+    apiPublicSafe<ApiComment[]>(`/posts/${slug}/comments`, []),
   ]);
   const relatedFiltered = related.filter((p) => p._id !== post._id).slice(0, 3);
-  const isAuthed = !!me;
 
   // P4.16 — Show "Updated on" only when the edit is > 24h after publish.
   const publishedTs = post.publishedAt ? +new Date(post.publishedAt) : 0;
@@ -188,9 +186,6 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
                   slug={slug}
                   initialLikes={post.likes}
                   initialCommentCount={post.commentCount}
-                  initialLiked={!!post.viewerLiked}
-                  initialBookmarked={!!post.viewerBookmarked}
-                  isAuthed={isAuthed}
                 />
                 <div className="w-px h-6 bg-white/10 my-1" />
                 <ShareButton />

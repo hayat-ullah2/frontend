@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowRight, Search } from "@/components/Icon";
-import { apiServerSafe } from "@/lib/apiServer";
+import { apiPublicSafe } from "@/lib/apiServer";
 import type { ApiCategory } from "@/lib/models";
 import { SITE_NAME } from "@/lib/site";
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function NotFound() {
-  const categories = await apiServerSafe<ApiCategory[]>("/categories", []);
+  const categories = await apiPublicSafe<ApiCategory[]>("/categories", []);
   const popular = [...categories]
     .sort((a, b) => b.postCount - a.postCount)
     .slice(0, 6);

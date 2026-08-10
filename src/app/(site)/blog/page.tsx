@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import ArticleCard from "@/components/site/ArticleCard";
 import FilterBar from "@/components/FilterBar";
 import { ArrowLeft, ArrowRight } from "@/components/Icon";
-import { apiServerSafe } from "@/lib/apiServer";
+import { apiPublicSafe } from "@/lib/apiServer";
 import type { ApiCategory, ApiPost, ApiTag } from "@/lib/models";
 import { SITE_NAME, absoluteUrl } from "@/lib/site";
 
@@ -76,9 +76,9 @@ export default async function BlogListingPage(props: PageProps<"/blog">) {
   if (tag) params.set("tag", tag);
 
   const [posts, categories, tags] = await Promise.all([
-    apiServerSafe<ApiPost[]>(`/posts?${params.toString()}`, []),
-    apiServerSafe<ApiCategory[]>("/categories", []),
-    apiServerSafe<ApiTag[]>("/tags", []),
+    apiPublicSafe<ApiPost[]>(`/posts?${params.toString()}`, []),
+    apiPublicSafe<ApiCategory[]>("/categories", []),
+    apiPublicSafe<ApiTag[]>("/tags", []),
   ]);
 
   const sorted = sortPosts(posts, sort);

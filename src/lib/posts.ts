@@ -84,6 +84,23 @@ export function generateLocalizedVersion(slug: string, country: string) {
   });
 }
 
+export type ViewerState = {
+  authed: boolean;
+  liked: boolean;
+  bookmarked: boolean;
+  likes: number;
+  commentCount: number;
+};
+
+/**
+ * Client-side view beacon. Records one view for the visit and returns the
+ * viewer-relative state (auth + like/bookmark) that the statically-rendered
+ * post page can't know at build time.
+ */
+export function registerView(slug: string) {
+  return api<ViewerState>(`/posts/${slug}/view`, { method: "POST" });
+}
+
 export function toggleLike(slug: string) {
   return api<{ liked: boolean; likes: number }>(`/posts/${slug}/like`, {
     method: "POST",

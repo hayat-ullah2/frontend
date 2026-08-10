@@ -15,6 +15,7 @@ import {
   getPost,
   getPostSeoAnalysis,
   listPosts,
+  registerView,
   toggleBookmark,
   toggleLike,
   updatePost,
@@ -86,6 +87,7 @@ router.post(
   asyncHandler(createComment),
 );
 
+router.post("/:slug/view", authOptional, asyncHandler(registerView));
 router.post("/:slug/like", authRequired, asyncHandler(toggleLike));
 router.post("/:slug/bookmark", authRequired, asyncHandler(toggleBookmark));
 router.post(

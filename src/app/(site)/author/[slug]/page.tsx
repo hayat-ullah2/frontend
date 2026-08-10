@@ -13,7 +13,7 @@ import {
   Twitter,
   Users,
 } from "@/components/Icon";
-import { apiServer, apiServerSafe } from "@/lib/apiServer";
+import { apiPublic, apiPublicSafe } from "@/lib/apiServer";
 import { ApiError } from "@/lib/api";
 import type { ApiPost, ApiUser } from "@/lib/models";
 
@@ -34,7 +34,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug: id } = await props.params;
   try {
-    const author = await apiServer<AuthorProfile>(`/users/${id}/profile`);
+    const author = await apiPublic<AuthorProfile>(`/users/${id}/profile`);
     return {
       title: author.name,
       description: author.bio,
@@ -49,13 +49,13 @@ export default async function AuthorPage(props: PageProps<"/author/[slug]">) {
 
   let author: AuthorProfile;
   try {
-    author = await apiServer<AuthorProfile>(`/users/${id}/profile`);
+    author = await apiPublic<AuthorProfile>(`/users/${id}/profile`);
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) notFound();
     throw err;
   }
 
-  const authorPosts = await apiServerSafe<ApiPost[]>(
+  const authorPosts = await apiPublicSafe<ApiPost[]>(
     `/posts?author=${author._id}&limit=50`,
     [],
   );

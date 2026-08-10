@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { apiServerSafe } from "@/lib/apiServer";
+import { apiPublicSafe } from "@/lib/apiServer";
 import type { ApiPost } from "@/lib/models";
 import { SITE_NAME } from "@/lib/site";
 
@@ -19,7 +19,7 @@ export default async function OpengraphImage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = await apiServerSafe<ApiPost | null>(`/posts/${slug}`, null);
+  const post = await apiPublicSafe<ApiPost | null>(`/posts/${slug}`, null);
 
   const title = post?.title ?? "Article not found";
   const category = post?.category?.name;
