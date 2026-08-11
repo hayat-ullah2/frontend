@@ -31,7 +31,7 @@ export default function ProductCard({
           />
         ) : (
           <div className="h-12 w-12 shrink-0 rounded-xl bg-gradient-accent grid place-items-center text-white font-bold">
-            {link.name.charAt(0)}
+            {link.name?.charAt(0) || "?"}
           </div>
         )}
 
