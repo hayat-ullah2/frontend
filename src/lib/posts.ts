@@ -29,6 +29,9 @@ export type PostInput = {
   targetCountries?: string[];
   targetLanguage?: string;
   contentCluster?: { name?: string; pillar?: boolean };
+  // Monetization
+  affiliateLinks?: string[]; // AffiliateLink ids
+  faqs?: { question: string; answer: string }[];
 };
 
 export type ContentBrief = {

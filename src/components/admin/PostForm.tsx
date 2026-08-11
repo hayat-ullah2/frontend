@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ImageUploader from "@/components/admin/ImageUploader";
 import SeoPanel from "@/components/admin/SeoPanel";
 import { ApiError } from "@/lib/api";
-import type { ApiCategory, ApiPost, ApiTag } from "@/lib/models";
+import type { ApiAffiliateLink, ApiCategory, ApiPost, ApiTag } from "@/lib/models";
 import { analyzeSeoRemote, createPost, updatePost, type PostInput } from "@/lib/posts";
 import { uploadImage } from "@/lib/uploads";
 import { analyzeSeo, type SeoAnalysis } from "@/lib/seo/engine";
@@ -40,11 +40,13 @@ export default function PostForm({
   tags: tagOptions,
   initial,
   publishedPosts = [],
+  affiliateOptions = [],
 }: {
   categories: ApiCategory[];
   tags: ApiTag[];
   initial?: ApiPost;
   publishedPosts?: LinkablePost[];
+  affiliateOptions?: ApiAffiliateLink[];
 }) {
   const router = useRouter();
   const isEdit = !!initial;
@@ -90,6 +92,20 @@ export default function PostForm({
   const [searchIntent, setSearchIntent] = useState<SearchIntent | "">(
     (initial?.searchIntent as SearchIntent) ?? "",
   );
+
+  // ── Monetization ──────────────────────────────────────────────────────
+  const [selectedAffiliate, setSelectedAffiliate] = useState<string[]>(
+    initial?.affiliateLinks?.map((l) => l._id) ?? [],
+  );
+  const [faqs, setFaqs] = useState<{ question: string; answer: string }[]>(
+    initial?.faqs ?? [],
+  );
+
+  function toggleAffiliate(id: string) {
+    setSelectedAffiliate((s) =>
+      s.includes(id) ? s.filter((x) => x !== id) : [...s, id],
+    );
+  }
 
   const [saving, setSaving] = useState<null | "draft" | "publish">(null);
   const [error, setError] = useState<string | null>(null);
@@ -305,6 +321,10 @@ export default function PostForm({
         targetCountries,
         targetLanguage: targetLanguage || undefined,
         searchIntent: searchIntent || undefined,
+        affiliateLinks: selectedAffiliate,
+        faqs: faqs
+          .map((f) => ({ question: f.question.trim(), answer: f.answer.trim() }))
+          .filter((f) => f.question && f.answer),
       };
       const post = isEdit
         ? await updatePost(initial!.slug, payload)
@@ -764,6 +784,53 @@ export default function PostForm({
               </div>
             </div>
           </div>
+          <div className="card p-6 space-y-4">
+            <div>
+              <h3 className="font-semibold">FAQ</h3>
+              <p className="text-xs text-foreground-subtle">
+                Answer real questions readers ask. Renders on the article and emits
+                FAQ schema for rich results — only add genuine Q&amp;As.
+              </p>
+            </div>
+            {faqs.map((f, i) => (
+              <div key={i} className="rounded-xl border border-white/10 p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-foreground-subtle">Q{i + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => setFaqs((s) => s.filter((_, j) => j !== i))}
+                    className="text-xs text-rose-300 hover:text-rose-200"
+                  >
+                    Remove
+                  </button>
+                </div>
+                <input
+                  value={f.question}
+                  onChange={(e) =>
+                    setFaqs((s) => s.map((x, j) => (j === i ? { ...x, question: e.target.value } : x)))
+                  }
+                  placeholder="Question"
+                  className="w-full bg-background border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500/40"
+                />
+                <textarea
+                  rows={2}
+                  value={f.answer}
+                  onChange={(e) =>
+                    setFaqs((s) => s.map((x, j) => (j === i ? { ...x, answer: e.target.value } : x)))
+                  }
+                  placeholder="Answer"
+                  className="w-full bg-background border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500/40 resize-none"
+                />
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => setFaqs((s) => [...s, { question: "", answer: "" }])}
+              className="btn-ghost text-sm"
+            >
+              + Add question
+            </button>
+          </div>
         </div>
 
         <aside className="space-y-6">
@@ -849,6 +916,42 @@ export default function PostForm({
                 ))}
               </div>
             </div>
+          </div>
+
+          <div className="card p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">Recommended tools</h3>
+              <Link href="/admin/affiliate" className="text-xs text-violet-300 hover:text-violet-200">
+                Manage
+              </Link>
+            </div>
+            <p className="text-xs text-foreground-subtle">
+              Attach affiliate tools to render tracked comparison + product cards in
+              this article. A disclosure is shown automatically.
+            </p>
+            {affiliateOptions.length === 0 ? (
+              <p className="text-xs text-foreground-subtle">
+                No tools yet.{" "}
+                <Link href="/admin/affiliate" className="underline">
+                  Add your first tool
+                </Link>
+                .
+              </p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {affiliateOptions.map((l) => (
+                  <button
+                    key={l._id}
+                    type="button"
+                    onClick={() => toggleAffiliate(l._id)}
+                    className={`chip ${selectedAffiliate.includes(l._id) ? "chip-accent" : "hover:text-foreground"}`}
+                  >
+                    {selectedAffiliate.includes(l._id) ? "✓ " : "+ "}
+                    {l.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </aside>
       </form>

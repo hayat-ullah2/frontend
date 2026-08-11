@@ -1,7 +1,9 @@
 import { Router } from "express";
+import affiliateRoutes from "./affiliate.routes.js";
 import authRoutes from "./auth.routes.js";
 import categoryRoutes from "./category.routes.js";
 import commentRoutes from "./comment.routes.js";
+import eventRoutes from "./event.routes.js";
 import inboundRoutes from "./inbound.routes.js";
 import postRoutes from "./post.routes.js";
 import statsRoutes from "./stats.routes.js";
@@ -28,6 +30,8 @@ router.use("/comments", commentRoutes);
 router.use("/users", userRoutes);
 router.use("/stats", statsRoutes);
 router.use("/uploads", uploadRoutes);
+router.use("/affiliate-links", affiliateRoutes);
+router.use("/events", eventRoutes);
 router.use("/", inboundRoutes); // /api/subscribers, /api/contact
 
 export default router;

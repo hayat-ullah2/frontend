@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ApiError } from "@/lib/api";
+import { track } from "@/lib/analytics";
 import { subscribe } from "@/lib/inbound";
 import { Mail, Sparkles } from "../Icon";
 
@@ -17,7 +18,8 @@ export default function Newsletter({ source = "site" }: { source?: string }) {
     if (!email.trim()) return;
     setSaving(true);
     try {
-      await subscribe(email.trim(), source);
+      await subscribe({ email: email.trim(), source });
+      track("newsletter_signup", { label: source });
       setDone(true);
       setEmail("");
     } catch (err) {

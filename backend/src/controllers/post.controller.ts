@@ -136,7 +136,13 @@ export async function getPost(req: Request, res: Response) {
   const post = await Post.findOne({ slug: req.params.slug })
     .populate("category", "name slug color")
     .populate("author", "name avatar bio socials")
-    .populate("tags", "name slug");
+    .populate("tags", "name slug")
+    // Never expose the raw affiliate destination URL to the browser — outbound
+    // traffic goes through the tracked /go/:slug redirect instead.
+    .populate(
+      "affiliateLinks",
+      "name slug vendor logo niche tagline description pricingNote rating badge pros cons useCases ctaLabel isAffiliate active",
+    );
   if (!post) throw ApiError.notFound("Post not found");
 
   // NB: views are no longer incremented here. The single-post page is rendered

@@ -1,5 +1,5 @@
 import { SITE_AUTHOR, SITE_NAME, SITE_SOCIAL, SITE_URL, absoluteUrl } from "./site";
-import type { ApiCategory, ApiPost } from "./models";
+import type { ApiCategory, ApiFaq, ApiPost } from "./models";
 
 /**
  * Central factory for schema.org JSON-LD payloads. Only include fields that
@@ -80,6 +80,27 @@ export function blogPostingSchema(post: ApiPost) {
       .filter(Boolean)
       .join(", ") || undefined,
     inLanguage: post.targetLanguage || undefined,
+  };
+}
+
+/**
+ * FAQPage rich-result schema. Only emit when there are real Q&A pairs — Google
+ * penalises empty or fabricated FAQ markup. Answers are plain text.
+ */
+export function faqSchema(faqs: ApiFaq[]) {
+  const valid = faqs.filter((f) => f.question?.trim() && f.answer?.trim());
+  if (valid.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: valid.map((f) => ({
+      "@type": "Question",
+      name: f.question.trim(),
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.answer.trim(),
+      },
+    })),
   };
 }
 

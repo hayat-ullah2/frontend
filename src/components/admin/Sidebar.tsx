@@ -13,15 +13,21 @@ import {
   Home,
   Layers,
   Logo,
+  Mail,
   MessageSquare,
   Settings,
+  Tag,
+  TrendUp,
   Users,
 } from "../Icon";
 
 const items = [
   { href: "/admin", label: "Dashboard", icon: BarChart },
+  { href: "/admin/revenue", label: "Revenue", icon: TrendUp },
   { href: "/admin/blogs", label: "Blogs", icon: FileText },
   { href: "/admin/categories", label: "Categories", icon: Layers },
+  { href: "/admin/affiliate", label: "Affiliate", icon: Tag },
+  { href: "/admin/subscribers", label: "Audience", icon: Mail },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/comments", label: "Comments", icon: MessageSquare },
   { href: "/admin/seo", label: "SEO", icon: Settings },

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { categories } from "@/lib/data";
+import CookieSettingsButton from "./CookieSettingsButton";
 import { Github, Linkedin, Logo, Twitter } from "../Icon";
 
 export default function Footer() {
@@ -81,10 +82,12 @@ export default function Footer() {
           <p className="text-xs text-foreground-subtle">
             © {new Date().getFullYear()} Nexversal. All rights reserved.
           </p>
-          <div className="flex items-center gap-4 text-xs text-foreground-subtle">
-            <Link href="#">Privacy</Link>
-            <Link href="#">Terms</Link>
-            <Link href="#">Cookies</Link>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-foreground-subtle">
+            <Link href="/privacy" className="hover:text-foreground">Privacy</Link>
+            <Link href="/terms" className="hover:text-foreground">Terms</Link>
+            <Link href="/cookies" className="hover:text-foreground">Cookies</Link>
+            <Link href="/disclosure" className="hover:text-foreground">Disclosure</Link>
+            <CookieSettingsButton className="hover:text-foreground" />
           </div>
         </div>
       </div>

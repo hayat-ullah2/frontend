@@ -55,6 +55,18 @@ const postSchema = new Schema(
     // Links this post to a canonical "original" when it is a localized variant.
     localizedFrom: { type: Schema.Types.ObjectId, ref: "Post" },
 
+    // ── Monetization ──────────────────────────────────────────────────────
+    // Products/tools recommended in this article, rendered as tracked cards.
+    affiliateLinks: [{ type: Schema.Types.ObjectId, ref: "AffiliateLink" }],
+    // FAQ block — also emitted as FAQPage JSON-LD for rich results.
+    faqs: [
+      {
+        _id: false,
+        question: { type: String, trim: true, maxlength: 300 },
+        answer: { type: String, trim: true, maxlength: 2000 },
+      },
+    ],
+
     // Server-authoritative analysis snapshot (recomputed on save/publish).
     seoScore: { type: Number, min: 0, max: 100, default: 0, index: true },
     seoScores: {

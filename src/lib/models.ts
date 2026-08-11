@@ -47,6 +47,8 @@ export type ApiPost = {
   updatedAt?: string;
   viewerLiked?: boolean;
   viewerBookmarked?: boolean;
+  affiliateLinks?: ApiAffiliateLink[];
+  faqs?: ApiFaq[];
   category: Pick<ApiCategory, "_id" | "name" | "slug" | "color">;
   author: Pick<ApiUser, "_id" | "name" | "avatar" | "role"> & { bio?: string };
   tags: Pick<ApiTag, "_id" | "name" | "slug">[];
@@ -74,6 +76,49 @@ export type ApiPost = {
   seoAnalyzedAt?: string;
 };
 
+/** Public, safe-to-serialize affiliate product shape (no destination URL). */
+export type ApiAffiliateLink = {
+  _id: string;
+  name: string;
+  slug: string;
+  vendor?: string;
+  logo?: string;
+  niche?: string;
+  tagline?: string;
+  description?: string;
+  pricingNote?: string;
+  rating?: number;
+  badge?: string;
+  pros?: string[];
+  cons?: string[];
+  useCases?: string[];
+  ctaLabel?: string;
+  isAffiliate?: boolean;
+  active?: boolean;
+  // Admin-only fields (present when fetched via the admin endpoint):
+  url?: string;
+  clicks?: number;
+  epc?: number;
+  earnings?: number;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type ApiFaq = { question: string; answer: string };
+
+export type ApiSubscriber = {
+  _id: string;
+  email: string;
+  name?: string;
+  source?: string;
+  leadMagnet?: string;
+  confirmed?: boolean;
+  unsubscribedAt?: string | null;
+  welcomeStep?: number;
+  welcomeDone?: boolean;
+  createdAt: string;
+};
+
 export type ApiComment = {
   _id: string;
   content: string;
@@ -93,6 +138,36 @@ export type DashboardStats = {
   likes: number;
   recentPosts: ApiPost[];
   recentUsers: ApiUser[];
+};
+
+export type AnalyticsSummary = {
+  windowDays: number;
+  traffic: { pageviews: number; uniqueVisitors: number };
+  engagement: {
+    outboundClicks: number;
+    ctaClicks: number;
+    productClicks: number;
+    newsletterSignups: number;
+  };
+  affiliate: {
+    clicksInWindow: number;
+    totalClicks: number;
+    earnings: number;
+    epc: number;
+    topLinks: {
+      _id: string;
+      name: string;
+      slug: string;
+      clicks: number;
+      epc?: number;
+      earnings?: number;
+    }[];
+  };
+  email: { subscribers: number; newInWindow: number; signupConversion: number };
+  content: {
+    publishedPosts: number;
+    topPosts: { _id: string; title: string; slug: string; views: number; likes: number }[];
+  };
 };
 
 export type UserStats = {

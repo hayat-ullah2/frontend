@@ -36,6 +36,18 @@ export const env = {
   frontendUrl: process.env.FRONTEND_URL ?? "http://localhost:3000",
   revalidateSecret: process.env.REVALIDATE_SECRET ?? "",
 
+  // Transactional/newsletter email. Everything works WITHOUT a provider — emails
+  // are logged to the console instead of sent, so the welcome sequence can be
+  // developed and tested before you connect Resend. Set RESEND_API_KEY (and a
+  // verified EMAIL_FROM) to actually deliver mail.
+  email: {
+    resendApiKey: process.env.RESEND_API_KEY ?? "",
+    from: process.env.EMAIL_FROM ?? "Nexversal <onboarding@resend.dev>",
+    // Shared secret a scheduler (Vercel Cron, etc.) passes to trigger sending.
+    cronSecret:
+      process.env.EMAIL_CRON_SECRET ?? process.env.REVALIDATE_SECRET ?? "",
+  },
+
   // Optional AI provider for SEO briefs / suggestions / localized drafts.
   // Everything works WITHOUT this via local heuristics — AI only adds
   // semantic suggestions. Keys live server-side only, never sent to the browser.

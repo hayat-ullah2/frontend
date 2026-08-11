@@ -4,16 +4,20 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ArticleCard from "@/components/site/ArticleCard";
 import CommentForm from "@/components/site/CommentForm";
+import FaqBlock from "@/components/site/FaqBlock";
 import JsonLd from "@/components/JsonLd";
+import LeadMagnet from "@/components/site/LeadMagnet";
 import Newsletter from "@/components/site/Newsletter";
 import PostActions from "@/components/site/PostActions";
 import ReadingProgress from "@/components/site/ReadingProgress";
+import AdSlot from "@/components/site/monetize/AdSlot";
+import RecommendedTools from "@/components/site/monetize/RecommendedTools";
 import ShareButton from "@/components/site/ShareButton";
 import { Clock, Eye, Linkedin, Twitter } from "@/components/Icon";
 import { apiPublic, apiPublicSafe } from "@/lib/apiServer";
 import { ApiError } from "@/lib/api";
 import type { ApiComment, ApiPost } from "@/lib/models";
-import { blogPostingSchema, breadcrumbSchema } from "@/lib/schema";
+import { blogPostingSchema, breadcrumbSchema, faqSchema } from "@/lib/schema";
 import { SITE_NAME, absoluteUrl } from "@/lib/site";
 
 // P4.14 — Regenerate an individual post every 5 minutes (also revalidated on
@@ -105,7 +109,8 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
             },
             { name: post.title },
           ]),
-        ]}
+          ...(post.faqs && post.faqs.length ? [faqSchema(post.faqs)] : []),
+        ].filter(Boolean)}
       />
 
       <article className="pb-20">
@@ -211,6 +216,12 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
                 </div>
               )}
 
+              <AdSlot className="my-10" />
+
+              <RecommendedTools links={post.affiliateLinks} postSlug={slug} />
+
+              <FaqBlock faqs={post.faqs} />
+
               <section id="comments" className="mt-12">
                 <h3 className="text-2xl font-bold">
                   Comments{" "}
@@ -255,6 +266,14 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
 
             <aside className="lg:col-span-3">
               <div className="sticky top-24 space-y-6">
+                <LeadMagnet
+                  slug="ai-tools-starter-kit"
+                  title="Free: The AI Tools Starter Kit"
+                  description="A no-hype checklist for picking AI & dev tools worth paying for."
+                  resourceHref="/resources/ai-tools-starter-kit"
+                  buttonLabel="Get it free"
+                  compact
+                />
                 <div className="card p-5">
                   <h4 className="font-semibold mb-3 text-sm">Share this article</h4>
                   <div className="flex flex-wrap gap-2">

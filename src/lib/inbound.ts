@@ -1,9 +1,23 @@
 import { api } from "./api";
 
-export function subscribe(email: string, source = "site") {
-  return api<{ id: string; email: string }>("/subscribers", {
+export type SubscribeInput = {
+  email: string;
+  source?: string;
+  name?: string;
+  leadMagnet?: string;
+};
+
+export function subscribe(input: SubscribeInput) {
+  return api<{ id: string; email: string; already?: boolean }>("/subscribers", {
     method: "POST",
-    json: { email, source },
+    json: input,
+  });
+}
+
+export function unsubscribe(email: string) {
+  return api<{ success: true }>("/subscribers/unsubscribe", {
+    method: "POST",
+    json: { email },
   });
 }
 
