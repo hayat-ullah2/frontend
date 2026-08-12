@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AnalyticsTracker from "@/components/site/AnalyticsTracker";
 import CookieConsent from "@/components/site/CookieConsent";
+import GoogleAnalyticsConsent from "@/components/site/GoogleAnalyticsConsent";
 import AdsScript from "@/components/site/monetize/AdsScript";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
@@ -86,8 +86,8 @@ export default function RootLayout({
         <AnalyticsTracker />
         <CookieConsent />
         <AdsScript />
+        {gaId ? <GoogleAnalyticsConsent gaId={gaId} /> : null}
       </body>
-      {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
     </html>
   );
 }

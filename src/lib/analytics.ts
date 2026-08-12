@@ -5,6 +5,7 @@
 
 import { sendGAEvent } from "@next/third-parties/google";
 import { API_BASE_URL } from "./api";
+import { hasConsent } from "./consent";
 
 export type EventType =
   | "pageview"
@@ -49,7 +50,9 @@ export function trackEvent(action: string, params: GAEventParams = {}): void {
     typeof window === "undefined" ||
     process.env.NODE_ENV !== "production" ||
     !process.env.NEXT_PUBLIC_GA_ID ||
-    !action
+    !action ||
+    // Only send to GA4 once the visitor has allowed analytics cookies.
+    !hasConsent("analytics")
   ) {
     return;
   }
