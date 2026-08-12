@@ -25,16 +25,25 @@ export function me() {
   return api<AuthUser>("/auth/me");
 }
 
+export type ProfileSocials = {
+  twitter?: string;
+  github?: string;
+  linkedin?: string;
+  website?: string;
+};
+
 export type ProfileUpdate = {
   name?: string;
   bio?: string;
+  title?: string;
   avatar?: string;
   avatarPublicId?: string;
+  socials?: ProfileSocials;
 };
 
 export function updateMe(input: ProfileUpdate) {
-  return api<AuthUser & { bio?: string; avatar?: string }>("/users/me", {
-    method: "PATCH",
-    json: input,
-  });
+  return api<AuthUser & { bio?: string; avatar?: string; title?: string; socials?: ProfileSocials }>(
+    "/users/me",
+    { method: "PATCH", json: input },
+  );
 }

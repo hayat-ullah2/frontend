@@ -94,18 +94,30 @@ export async function updateUser(req: Request, res: Response) {
  */
 export async function updateMe(req: Request, res: Response) {
   if (!req.user) throw ApiError.unauthorized();
-  const { name, bio, avatar, avatarPublicId } = req.body as Partial<{
+  const { name, bio, title, avatar, avatarPublicId, socials } = req.body as Partial<{
     name: string;
     bio: string;
+    title: string;
     avatar: string;
     avatarPublicId: string;
+    socials: { twitter?: string; github?: string; linkedin?: string; website?: string };
   }>;
 
   const update: Record<string, unknown> = {};
   if (name) update.name = name;
   if (bio !== undefined) update.bio = bio;
+  if (title !== undefined) update.title = title;
   if (avatar !== undefined) update.avatar = avatar;
   if (avatarPublicId !== undefined) update.avatarPublicId = avatarPublicId;
+  if (socials !== undefined) {
+    // Only keep known keys; trim blanks to empty so cleared fields are removed.
+    update.socials = {
+      twitter: socials?.twitter?.trim() || undefined,
+      github: socials?.github?.trim() || undefined,
+      linkedin: socials?.linkedin?.trim() || undefined,
+      website: socials?.website?.trim() || undefined,
+    };
+  }
 
   const existing = await User.findById(req.user.sub);
   if (!existing) throw ApiError.notFound("User not found");
@@ -131,9 +143,11 @@ export async function publicProfile(req: Request, res: Response) {
   // Admin accounts do NOT get a public profile page — pretend they don't exist
   // from a public-author standpoint.
   const user = await User.findById(req.params.id).select(
-    "name avatar bio socials createdAt role",
+    "name avatar bio title socials createdAt role",
   );
-  if (!user || user.role === "admin") throw ApiError.notFound("User not found");
+  // Anyone who authors content gets a public author page (needed for E-E-A-T
+  // and byline links). We still strip email/role from the response below.
+  if (!user) throw ApiError.notFound("User not found");
 
   // Strip role before responding.
   const { role: _role, ...publicData } = user.toObject();

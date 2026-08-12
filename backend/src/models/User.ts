@@ -22,6 +22,9 @@ const userSchema = new Schema(
     avatar: { type: String },
     avatarPublicId: { type: String },
     bio: { type: String, maxlength: 600 },
+    // Public author title / credentials for E-E-A-T, e.g.
+    // "Indie developer · 8 yrs building SaaS". Distinct from the permission role.
+    title: { type: String, trim: true, maxlength: 120 },
     status: {
       type: String,
       enum: ["active", "pending", "banned"],

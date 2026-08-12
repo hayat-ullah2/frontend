@@ -11,9 +11,14 @@ import { uploadImage } from "@/lib/uploads";
 export default function AccountForm({ user }: { user: ApiUser }) {
   const router = useRouter();
   const [name, setName] = useState(user.name);
+  const [title, setTitle] = useState(user.title ?? "");
   const [bio, setBio] = useState(user.bio ?? "");
   const [avatar, setAvatar] = useState(user.avatar ?? "");
   const [avatarPublicId, setAvatarPublicId] = useState<string | undefined>();
+  const [twitter, setTwitter] = useState(user.socials?.twitter ?? "");
+  const [github, setGithub] = useState(user.socials?.github ?? "");
+  const [linkedin, setLinkedin] = useState(user.socials?.linkedin ?? "");
+  const [website, setWebsite] = useState(user.socials?.website ?? "");
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -46,9 +51,16 @@ export default function AccountForm({ user }: { user: ApiUser }) {
     try {
       await updateMe({
         name: name.trim(),
+        title: title.trim(),
         bio: bio.trim(),
         avatar: avatar.trim() || undefined,
         avatarPublicId,
+        socials: {
+          twitter: twitter.trim() || undefined,
+          github: github.trim() || undefined,
+          linkedin: linkedin.trim() || undefined,
+          website: website.trim() || undefined,
+        },
       });
       setSuccess("Profile updated.");
       router.refresh();
@@ -116,6 +128,21 @@ export default function AccountForm({ user }: { user: ApiUser }) {
 
       <div>
         <label className="block text-xs uppercase tracking-wider text-foreground-subtle mb-1.5">
+          Title / credentials
+        </label>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="e.g. Indie developer · 8 yrs building SaaS"
+          className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none"
+        />
+        <p className="text-xs text-foreground-subtle mt-1.5">
+          Shown under your name on your author page — a key trust signal (E-E-A-T).
+        </p>
+      </div>
+
+      <div>
+        <label className="block text-xs uppercase tracking-wider text-foreground-subtle mb-1.5">
           Email
         </label>
         <input
@@ -139,6 +166,25 @@ export default function AccountForm({ user }: { user: ApiUser }) {
           placeholder="A short bio shown on your author page."
           className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none resize-none"
         />
+      </div>
+
+      <div>
+        <label className="block text-xs uppercase tracking-wider text-foreground-subtle mb-1.5">
+          Links (author page)
+        </label>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="Website URL"
+            className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none" />
+          <input value={github} onChange={(e) => setGithub(e.target.value)} placeholder="GitHub URL"
+            className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none" />
+          <input value={twitter} onChange={(e) => setTwitter(e.target.value)} placeholder="X / Twitter URL"
+            className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none" />
+          <input value={linkedin} onChange={(e) => setLinkedin(e.target.value)} placeholder="LinkedIn URL"
+            className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none" />
+        </div>
+        <p className="text-xs text-foreground-subtle mt-1.5">
+          Real profiles (GitHub, X, your site) strengthen author trust for search engines.
+        </p>
       </div>
 
       {error && (

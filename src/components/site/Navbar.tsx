@@ -13,12 +13,15 @@ import { Close, Logo, Menu, Search, User } from "../Icon";
 // (see fetch below) so the public site never reveals their identity.
 type NavUser = { _id: string; name: string; avatar?: string };
 
+// Niche-focused nav for "AI & dev tools for indie developers".
+// Only link categories that actually exist in the DB, or the link 404s.
+// After you create Hosting / Backend / SaaS categories in /admin/categories,
+// add them here, e.g. { href: "/category/hosting", label: "Hosting" }.
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/blog", label: "Blog" },
-  { href: "/category/ai", label: "AI" },
-  { href: "/category/programming", label: "Programming" },
-  { href: "/category/business", label: "Business" },
+  { href: "/category/ai", label: "AI Tools" },
+  { href: "/category/programming", label: "Coding" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];

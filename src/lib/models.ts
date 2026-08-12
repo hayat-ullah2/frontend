@@ -8,6 +8,13 @@ export type ApiUser = {
   status: "active" | "pending" | "banned";
   avatar?: string;
   bio?: string;
+  title?: string;
+  socials?: {
+    twitter?: string;
+    github?: string;
+    linkedin?: string;
+    website?: string;
+  };
   createdAt: string;
   updatedAt: string;
 };

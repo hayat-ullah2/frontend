@@ -19,7 +19,7 @@ import type { ApiPost, ApiUser } from "@/lib/models";
 
 type AuthorProfile = Pick<
   ApiUser,
-  "_id" | "name" | "avatar" | "bio" | "createdAt"
+  "_id" | "name" | "avatar" | "bio" | "title" | "createdAt"
 > & {
   socials?: {
     twitter?: string;
@@ -100,6 +100,9 @@ export default async function AuthorPage(props: PageProps<"/author/[slug]">) {
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mt-1">
               {author.name}
             </h1>
+            {author.title && (
+              <p className="mt-1.5 text-sm text-violet-300 font-medium">{author.title}</p>
+            )}
             {author.bio && (
               <p className="mt-3 text-foreground-muted max-w-2xl">{author.bio}</p>
             )}
