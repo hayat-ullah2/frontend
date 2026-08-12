@@ -156,9 +156,15 @@ body {
 
 .prose-article {
   color: var(--foreground);
-  font-size: 1.0625rem;
-  line-height: 1.75;
-  max-width: 70ch;
+  font-size: 1.125rem;
+  line-height: 1.8;
+  max-width: 68ch;
+}
+/* News-style emphasized lead paragraph (the "standfirst"). */
+.prose-article > p:first-of-type {
+  font-size: 1.2em;
+  line-height: 1.6;
+  color: var(--foreground);
 }
 .prose-article h2 {
   font-size: 1.65rem;
@@ -173,17 +179,17 @@ body {
   margin: 1.75rem 0 0.75rem;
 }
 .prose-article p {
-  margin: 0 0 1.1rem;
-  color: var(--foreground-muted);
+  margin: 0 0 1.35rem;
+  color: #cdced6;
 }
 .prose-article p strong {
   color: var(--foreground);
 }
 .prose-article ul,
 .prose-article ol {
-  margin: 0 0 1.2rem;
-  padding-left: 1.25rem;
-  color: var(--foreground-muted);
+  margin: 0 0 1.35rem;
+  padding-left: 1.35rem;
+  color: #cdced6;
 }
 .prose-article ul { list-style: disc; }
 .prose-article ol { list-style: decimal; }
@@ -215,6 +221,71 @@ body {
   border-radius: 0.75rem;
   overflow-x: auto;
   margin: 1.5rem 0;
+  max-width: 100%;
+}
+
+/* ── Article responsiveness ──────────────────────────────────────────────
+   Keep long words/URLs from pushing the page sideways, and make any embedded
+   media, tables or iframes fit the screen instead of overflowing on mobile. */
+.prose-article {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.prose-article img,
+.prose-article video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0.75rem;
+  margin: 1.5rem 0;
+}
+.prose-article figure {
+  margin: 1.5rem 0;
+  max-width: 100%;
+}
+.prose-article figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--foreground-subtle);
+  text-align: center;
+}
+.prose-article iframe {
+  max-width: 100%;
+}
+/* Content tables scroll within their own box rather than breaking the layout. */
+.prose-article table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin: 1.5rem 0;
+}
+.prose-article th,
+.prose-article td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Tighter, more readable type on phones (news-article feel). */
+@media (max-width: 640px) {
+  .prose-article {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+  }
+  .prose-article > p:first-of-type {
+    font-size: 1.12em;
+  }
+  .prose-article h2 {
+    font-size: 1.4rem;
+    margin: 1.9rem 0 0.85rem;
+  }
+  .prose-article h3 {
+    font-size: 1.15rem;
+  }
 }
 
 @keyframes shimmer {

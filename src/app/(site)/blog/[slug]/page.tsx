@@ -114,16 +114,9 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
       />
 
       <article className="pb-20">
-        <header className="relative">
-          {post.cover && (
-            <div className="absolute inset-0 -z-10">
-              <Image src={post.cover} alt="" fill priority sizes="100vw" className="object-cover opacity-30" />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/80 to-background" />
-            </div>
-          )}
-
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pt-16 pb-12 text-center">
-            <nav className="flex items-center justify-center gap-2 text-xs text-foreground-subtle">
+        <header>
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14">
+            <nav className="flex items-center gap-2 text-xs text-foreground-subtle">
               <Link href="/" className="hover:text-foreground">Home</Link>
               <span>/</span>
               <Link href="/blog" className="hover:text-foreground">Blog</Link>
@@ -133,18 +126,37 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
               </Link>
             </nav>
 
-            <Link href={`/category/${post.category.slug}`} className="chip-accent inline-flex mt-6">
+            <Link href={`/category/${post.category.slug}`} className="chip-accent inline-flex mt-5">
               {post.category.name}
             </Link>
-            <h1 className="mt-5 text-3xl sm:text-5xl font-bold tracking-tight leading-tight">
+            <h1 className="mt-4 text-[1.9rem] sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.12]">
               {post.title}
             </h1>
-            <p className="mt-4 text-foreground-muted text-lg max-w-2xl mx-auto">
-              {post.excerpt}
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-5 text-sm">
-              <span className="text-foreground-muted">
-                By <span className="text-foreground">{post.author.name}</span>
+            {post.excerpt && (
+              <p className="mt-4 text-lg sm:text-xl text-foreground-muted leading-relaxed">
+                {post.excerpt}
+              </p>
+            )}
+
+            {/* Byline bar */}
+            <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-white/10 py-4 text-sm">
+              <span className="flex items-center gap-2">
+                {post.author.avatar ? (
+                  <Image
+                    src={post.author.avatar}
+                    alt={post.author.name}
+                    width={28}
+                    height={28}
+                    className="rounded-full object-cover h-7 w-7"
+                  />
+                ) : (
+                  <span className="w-7 h-7 rounded-full bg-gradient-accent grid place-items-center text-white text-[10px] font-bold">
+                    {post.author.name.charAt(0)}
+                  </span>
+                )}
+                <span className="text-foreground-muted">
+                  By <span className="text-foreground font-medium">{post.author.name}</span>
+                </span>
               </span>
               {post.publishedAt && (
                 <span className="text-foreground-subtle">
@@ -174,12 +186,22 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
             </div>
           </div>
 
+          {/* Hero image — full-bleed on mobile, contained on larger screens. */}
           {post.cover && (
-            <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-              <div className="relative aspect-[16/8] rounded-3xl overflow-hidden border border-white/5">
-                <Image src={post.cover} alt={post.title} fill priority sizes="100vw" className="object-cover" />
+            <figure className="mt-6 sm:mt-8">
+              <div className="sm:mx-auto sm:max-w-4xl sm:px-6 lg:px-8">
+                <div className="relative aspect-[16/9] overflow-hidden border-y border-white/5 sm:rounded-2xl sm:border">
+                  <Image
+                    src={post.cover}
+                    alt={post.title}
+                    fill
+                    priority
+                    sizes="(max-width: 640px) 100vw, 896px"
+                    className="object-cover"
+                  />
+                </div>
               </div>
-            </div>
+            </figure>
           )}
         </header>
 
