@@ -35,6 +35,9 @@ export async function generateMetadata(
       title,
       description,
       alternates: { canonical: canonicalPath },
+      // Keep empty category pages out of the index (thin content) but let
+      // crawlers follow links out of them.
+      robots: (cat.postCount ?? 0) === 0 ? { index: false, follow: true } : undefined,
       openGraph: {
         title,
         description,

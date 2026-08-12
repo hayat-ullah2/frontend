@@ -35,12 +35,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
 
-  const categoryRoutes: MetadataRoute.Sitemap = categories.map((c) => ({
-    url: absoluteUrl(`/category/${c.slug}`),
-    lastModified: now,
-    changeFrequency: "weekly",
-    priority: 0.6,
-  }));
+  const categoryRoutes: MetadataRoute.Sitemap = categories
+    // Don't advertise empty category pages — they're noindex'd anyway (#4).
+    .filter((c) => (c.postCount ?? 0) > 0)
+    .map((c) => ({
+      url: absoluteUrl(`/category/${c.slug}`),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    }));
 
   return [...staticRoutes, ...postRoutes, ...categoryRoutes];
 }

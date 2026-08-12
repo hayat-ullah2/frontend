@@ -58,7 +58,7 @@ export default function AdSlot({
     if (process.env.NODE_ENV === "production") return null;
     return (
       <div
-        className={`grid place-items-center rounded-xl border border-dashed border-white/15 text-[11px] uppercase tracking-widest text-foreground-subtle ${className}`}
+        className={`grid place-items-center rounded-xl border border-dashed border-white/15 px-3 text-center text-[11px] uppercase tracking-widest text-foreground-subtle break-words ${className}`}
         style={{ minHeight }}
         aria-hidden
       >

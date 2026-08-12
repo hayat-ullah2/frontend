@@ -1,6 +1,9 @@
 // Single source of truth for site-level constants. Import from here everywhere.
-// Replace SITE_URL with your production domain when you deploy.
-export const SITE_URL = "https://nexversal.com";
+// Canonical/base URL. Override with NEXT_PUBLIC_SITE_URL in production so a
+// preview/staging deploy never leaks its own domain into canonical tags,
+// sitemaps or Open Graph URLs.
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://nexversal.com";
 export const SITE_NAME = "Nexversal";
 export const SITE_DESCRIPTION =
   "Nexversal is a modern, multi-niche publication covering technology, AI, programming, business, finance, lifestyle and more.";

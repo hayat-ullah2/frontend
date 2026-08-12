@@ -140,7 +140,10 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
 
             {/* Byline bar */}
             <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-white/10 py-4 text-sm">
-              <span className="flex items-center gap-2">
+              <Link
+                href={`/author/${post.author._id}`}
+                className="flex items-center gap-2 group"
+              >
                 {post.author.avatar ? (
                   <Image
                     src={post.author.avatar}
@@ -155,9 +158,12 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
                   </span>
                 )}
                 <span className="text-foreground-muted">
-                  By <span className="text-foreground font-medium">{post.author.name}</span>
+                  By{" "}
+                  <span className="text-foreground font-medium group-hover:underline">
+                    {post.author.name}
+                  </span>
                 </span>
-              </span>
+              </Link>
               {post.publishedAt && (
                 <span className="text-foreground-subtle">
                   {new Date(post.publishedAt).toLocaleDateString("en-US", {
@@ -206,7 +212,7 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
         </header>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-14">
-          <div className="grid lg:grid-cols-12 gap-10">
+          <div className="grid lg:grid-cols-12 gap-10 min-w-0">
             <aside className="lg:col-span-1 hidden lg:block">
               <div className="sticky top-24 flex flex-col items-center gap-5">
                 <PostActions
@@ -219,7 +225,7 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
               </div>
             </aside>
 
-            <div className="lg:col-span-8">
+            <div className="lg:col-span-8 min-w-0">
               {post.content && (
                 <div
                   className="prose-article"
@@ -286,7 +292,7 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
               </section>
             </div>
 
-            <aside className="lg:col-span-3">
+            <aside className="lg:col-span-3 min-w-0">
               <div className="sticky top-24 space-y-6">
                 <LeadMagnet
                   slug="ai-tools-starter-kit"
