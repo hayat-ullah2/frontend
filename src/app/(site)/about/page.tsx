@@ -2,8 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import Newsletter from "@/components/site/Newsletter";
-import { ArrowRight, Mail, MapPin, Phone, Sparkles, Users } from "@/components/Icon";
-import { authors } from "@/lib/data";
+import { ArrowRight, Mail, Sparkles, Users } from "@/components/Icon";
 
 export const metadata: Metadata = {
   title: "About",
@@ -11,16 +10,18 @@ export const metadata: Metadata = {
 };
 
 const values = [
-  { title: "Write what matters", body: "Long-form, original, unhurried. We choose depth over volume — every essay should earn its place." },
-  { title: "Respect the reader", body: "No dark patterns, no clickbait, no sponsored fluff. Reader trust is the only metric that compounds." },
-  { title: "Build in public", body: "Our editorial calendar, traffic numbers and revenue are open. Transparency keeps us honest." },
-];
-
-const milestones = [
-  { year: "2023", text: "Nexversal founded as a side-project newsletter." },
-  { year: "2024", text: "Crossed 100k monthly readers; brought on three full-time editors." },
-  { year: "2025", text: "Launched the writers' program and the open editorial calendar." },
-  { year: "2026", text: "Half a million monthly readers across 14 niches." },
+  {
+    title: "Write what matters",
+    body: "Long-form, original, unhurried. We choose depth over volume — every guide should earn its place and actually help you decide.",
+  },
+  {
+    title: "Respect the reader",
+    body: "No dark patterns, no clickbait, no sponsored fluff. When we recommend a tool, we say why — and we disclose affiliate links up front.",
+  },
+  {
+    title: "Build in the open",
+    body: "We publish our editorial standards, cite our sources, and correct mistakes openly. Trust is the only metric that compounds.",
+  },
 ];
 
 export default function AboutPage() {
@@ -40,13 +41,19 @@ export default function AboutPage() {
             <Sparkles size={12} /> About us
           </span>
           <h1 className="mt-6 text-4xl sm:text-6xl font-bold tracking-tight leading-tight">
-            We publish ideas that <span className="text-gradient-accent">earn the page.</span>
+            Practical guides to the tools that{" "}
+            <span className="text-gradient-accent">actually ship.</span>
           </h1>
           <p className="mt-5 text-foreground-muted text-lg max-w-2xl mx-auto">
-            Nexversal is a small, opinionated publication covering technology, AI, business,
-            finance and the lives we build around them. We choose depth over volume and
-            trust over reach.
+            Nexversal is an independent publication about AI tools and developer
+            tooling for founders and engineers. We test what we write about and
+            choose depth over volume.
           </p>
+          <div className="mt-8">
+            <Link href="/blog" className="btn-primary inline-flex">
+              Browse articles <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -56,7 +63,7 @@ export default function AboutPage() {
           <div className="relative aspect-[5/4] rounded-3xl overflow-hidden">
             <Image
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1400&q=80&auto=format&fit=crop"
-              alt="The team"
+              alt="Working through a developer tooling comparison"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
@@ -65,28 +72,14 @@ export default function AboutPage() {
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Our mission</h2>
             <p className="mt-4 text-foreground-muted leading-relaxed">
-              The web is full of content. We're betting it's hungry for writing —
-              for arguments that take a position, evidence that earns trust and
-              prose that respects the reader's time.
+              There is no shortage of AI-tool listicles. There is a shortage of
+              honest, hands-on guidance that helps a founder or engineer pick the
+              right tool and get it working.
             </p>
             <p className="mt-3 text-foreground-muted leading-relaxed">
-              Nexversal exists to publish the long-form work the internet rewards
-              the least and needs the most.
+              Nexversal exists to publish exactly that — evaluated recommendations,
+              real trade-offs, and setups you can actually follow.
             </p>
-            <div className="mt-8 grid grid-cols-3 gap-6">
-              {[
-                { v: "1.2k+", l: "Articles" },
-                { v: "120+", l: "Writers" },
-                { v: "480k", l: "Monthly readers" },
-              ].map((s) => (
-                <div key={s.l}>
-                  <p className="text-2xl font-bold">{s.v}</p>
-                  <p className="text-xs text-foreground-subtle uppercase tracking-wider">
-                    {s.l}
-                  </p>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </section>
@@ -111,62 +104,46 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Timeline */}
-      <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <span className="chip">Milestones</span>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">A short history</h2>
-        </div>
-        <ol className="mt-10 relative border-l border-white/10 ml-2">
-          {milestones.map((m) => (
-            <li key={m.year} className="pl-6 pb-8 relative">
-              <span className="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-gradient-accent" />
-              <p className="text-sm text-foreground-subtle">{m.year}</p>
-              <p className="mt-1 text-foreground">{m.text}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {/* Team */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <span className="chip">
-              <Users size={12} /> The team
-            </span>
-            <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
-              The people behind it
-            </h2>
-          </div>
-          <Link href="/contact" className="text-sm text-foreground-muted hover:text-foreground inline-flex items-center gap-1">
-            Join us <ArrowRight size={14} />
+      {/* Who writes Nexversal */}
+      <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+        <span className="chip">
+          <Users size={12} /> The team
+        </span>
+        <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
+          Who writes Nexversal
+        </h2>
+        <p className="mt-4 text-foreground-muted leading-relaxed">
+          Nexversal is independently written and edited. Every article is
+          attributed to its author, whose credentials and links appear on their
+          author page. We don&apos;t publish anonymous or AI-spun filler.
+        </p>
+        <div className="mt-6">
+          <Link
+            href="/contact"
+            className="text-sm text-foreground-muted hover:text-foreground inline-flex items-center gap-1"
+          >
+            Want to write for us? Get in touch <ArrowRight size={14} />
           </Link>
-        </div>
-        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {authors.slice(0, 6).map((a) => (
-            <Link key={a.slug} href={`/author/${a.slug}`} className="card p-6 group">
-              <div className="flex items-center gap-4">
-                <div className="relative w-16 h-16 rounded-2xl overflow-hidden">
-                  <Image src={a.avatar} alt={a.name} fill sizes="64px" className="object-cover" />
-                </div>
-                <div>
-                  <p className="font-semibold">{a.name}</p>
-                  <p className="text-xs text-foreground-subtle">{a.role}</p>
-                </div>
-              </div>
-              <p className="mt-4 text-sm text-foreground-muted line-clamp-3">{a.bio}</p>
-            </Link>
-          ))}
         </div>
       </section>
 
       {/* Contact strip */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="card p-8 grid sm:grid-cols-3 gap-6">
+        <div className="card p-8 grid sm:grid-cols-2 gap-6 items-center">
           <Info icon={<Mail size={18} />} label="Email" value="hello@nexversal.com" />
-          <Info icon={<Phone size={18} />} label="Phone" value="+41 22 555 0142" />
-          <Info icon={<MapPin size={18} />} label="HQ" value="Zürich, Switzerland" />
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-accent grid place-items-center text-white">
+              <ArrowRight size={18} />
+            </div>
+            <div>
+              <p className="text-xs text-foreground-subtle uppercase tracking-wider">
+                Prefer a form?
+              </p>
+              <Link href="/contact" className="text-foreground font-medium hover:underline">
+                Use our contact page
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

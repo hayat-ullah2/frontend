@@ -74,7 +74,7 @@ export default function SignupPage() {
         />
         <div className="relative max-w-md p-10">
           <span className="chip">
-            <Sparkles size={12} /> Join 42,000+ readers
+            <Sparkles size={12} /> Depth over volume
           </span>
           <h2 className="mt-5 text-3xl font-bold tracking-tight leading-tight">
             Long-form for the <span className="text-gradient-accent">curious.</span>

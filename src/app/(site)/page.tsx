@@ -133,11 +133,6 @@ export default async function HomePage() {
                   Browse all articles
                 </Link>
               </div>
-              <div className="mt-10 grid grid-cols-3 gap-6 max-w-md">
-                <Stat label="Articles" value={posts.length.toString()} />
-                <Stat label="Categories" value={categories.length.toString()} />
-                <Stat label="Writers" value={authors.length.toString()} />
-              </div>
             </div>
 
             <div className="lg:col-span-7">
@@ -345,15 +340,6 @@ function SectionHeader({
           {link.label} <ArrowRight size={14} />
         </Link>
       )}
-    </div>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <p className="text-2xl font-semibold">{value}</p>
-      <p className="text-xs text-foreground-subtle uppercase tracking-wider">{label}</p>
     </div>
   );
 }

@@ -1,9 +1,18 @@
 import Link from "next/link";
-import { categories } from "@/lib/data";
+import { apiPublicSafe } from "@/lib/apiServer";
+import type { ApiCategory } from "@/lib/models";
 import CookieSettingsButton from "./CookieSettingsButton";
 import { Github, Linkedin, Logo, Twitter } from "../Icon";
 
-export default function Footer() {
+export default async function Footer() {
+  // Real categories from the DB — only those with published posts, so the
+  // footer never links to empty/placeholder categories.
+  const categories = await apiPublicSafe<ApiCategory[]>("/categories", []);
+  const categoryLinks = categories
+    .filter((c) => (c.postCount ?? 0) > 0)
+    .slice(0, 6)
+    .map((c) => ({ href: `/category/${c.slug}`, label: c.name }));
+
   const cols = [
     {
       title: "Explore",
@@ -14,13 +23,9 @@ export default function Footer() {
         { href: "/contact", label: "Contact" },
       ],
     },
-    {
-      title: "Categories",
-      links: categories.slice(0, 6).map((c) => ({
-        href: `/category/${c.slug}`,
-        label: c.name,
-      })),
-    },
+    ...(categoryLinks.length > 0
+      ? [{ title: "Categories", links: categoryLinks }]
+      : []),
     {
       title: "Resources",
       links: [

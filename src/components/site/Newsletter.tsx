@@ -55,8 +55,8 @@ export default function Newsletter({ source = "site" }: { source?: string }) {
             <span className="text-gradient-accent">delivered Sundays.</span>
           </h2>
           <p className="mt-3 text-foreground-muted max-w-md">
-            One handpicked essay, three sharp links, and zero noise. Join 42,000+
-            curious people building the future.
+            One handpicked essay, three sharp links, and zero noise — straight to
+            your inbox. Unsubscribe anytime.
           </p>
         </div>
 
