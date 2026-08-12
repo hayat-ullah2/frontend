@@ -118,7 +118,7 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
             <span className="text-foreground">{category.name}</span>
           </nav>
           <h1 className="mt-6 text-5xl sm:text-6xl font-bold tracking-tight">
-            {category.name}
+            <span className="text-gradient-accent">{category.name}</span>
           </h1>
           <p className="mt-4 text-foreground-muted text-lg max-w-2xl">
             {category.description}
