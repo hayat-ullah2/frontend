@@ -39,7 +39,7 @@ export function websiteSchema() {
     name: SITE_NAME,
     url: SITE_URL,
     description:
-      "Modern, multi-niche publication covering technology, AI, business, finance, and more.",
+      "Independent reviews and comparisons of the best AI tools and software for writing, coding, images, video, business and productivity.",
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
     potentialAction: {
       "@type": "SearchAction",

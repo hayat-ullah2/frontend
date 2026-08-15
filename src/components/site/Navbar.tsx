@@ -13,15 +13,16 @@ import { Close, Logo, Menu, Search, User } from "../Icon";
 // (see fetch below) so the public site never reveals their identity.
 type NavUser = { _id: string; name: string; avatar?: string };
 
-// Niche-focused nav for "AI & dev tools for indie developers".
-// Only link categories that actually exist in the DB, or the link 404s.
-// After you create Hosting / Backend / SaaS categories in /admin/categories,
-// add them here, e.g. { href: "/category/hosting", label: "Hosting" }.
+// Niche-focused nav for the "AI Tools & Software" site.
+// Slugs MUST match categories that exist in the DB (see backend seed-content.ts),
+// or the link 404s. After you add a new category in /admin/categories, add it
+// here too, e.g. { href: "/category/ai-video-tools", label: "AI Video" }.
 const NAV_LINKS = [
   { href: "/", label: "Home" },
-  { href: "/blog", label: "Blog" },
-  { href: "/category/ai", label: "AI Tools" },
-  { href: "/category/programming", label: "Coding" },
+  { href: "/blog", label: "Reviews" },
+  { href: "/category/ai-writing-tools", label: "AI Writing" },
+  { href: "/category/ai-coding-tools", label: "AI Coding" },
+  { href: "/category/comparisons", label: "Comparisons" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];

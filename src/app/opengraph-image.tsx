@@ -95,7 +95,7 @@ export default function OG() {
               lineHeight: 1.3,
             }}
           >
-            Long-form essays on technology, AI, business & the ideas shaping the next decade
+            Reviews & comparisons of the best AI tools — writing, coding, images, video & more
           </div>
         </div>
       </div>

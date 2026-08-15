@@ -11,27 +11,26 @@ const slug = (s: string) => slugify(s, { lower: true, strict: true });
 
 setServers(["1.1.1.1", "8.8.8.8", "1.0.0.1", "8.8.4.4"]);
 
+// ── AI Tools & Software niche ────────────────────────────────────────────────
+// Every category is a sub-topic of "AI tools" so the site builds real topical
+// authority (Google ranks focused sites, not scattered ones). The navbar links
+// to some of these slugs — keep them in sync (see Navbar.tsx NAV_LINKS).
 const CATEGORIES = [
-  { name: "Technology", description: "Hardware, gadgets, and the cutting edge of consumer tech.", color: "from-blue-500 to-cyan-400" },
-  { name: "Artificial Intelligence", description: "LLMs, agents, ML research and applied AI.", color: "from-purple-500 to-fuchsia-500" },
-  { name: "Programming", description: "Languages, frameworks, patterns and craft.", color: "from-emerald-500 to-teal-400" },
-  { name: "Cybersecurity", description: "Threats, defenses, audits and policy.", color: "from-red-500 to-rose-400" },
-  { name: "Business", description: "Strategy, leadership and the startup grind.", color: "from-amber-500 to-orange-400" },
-  { name: "Finance", description: "Markets, investing and personal finance.", color: "from-yellow-500 to-amber-400" },
-  { name: "Health & Fitness", description: "Performance, nutrition, sleep and longevity.", color: "from-lime-500 to-green-400" },
-  { name: "Education", description: "Learning, curricula and skill development.", color: "from-indigo-500 to-blue-400" },
-  { name: "Travel", description: "Destinations, guides and travel tech.", color: "from-sky-500 to-cyan-400" },
-  { name: "Lifestyle", description: "Habits, productivity, and design for living.", color: "from-pink-500 to-rose-400" },
-  { name: "Sports", description: "Analysis, athletes, and the science of sport.", color: "from-orange-500 to-red-400" },
-  { name: "Motivation", description: "Mindset, focus, and the long game.", color: "from-fuchsia-500 to-pink-400" },
-  { name: "Crypto", description: "Web3, DeFi, on-chain analysis.", color: "from-violet-500 to-purple-400" },
-  { name: "Digital Marketing", description: "SEO, growth and content strategy.", color: "from-teal-500 to-emerald-400" },
+  { name: "AI Writing Tools", description: "AI writers, copy and content generators — reviewed and compared.", color: "from-purple-500 to-fuchsia-500" },
+  { name: "AI Coding Tools", description: "AI code assistants, copilots and pair-programmers for developers.", color: "from-emerald-500 to-teal-400" },
+  { name: "AI Image Tools", description: "AI image generators, editors and design tools.", color: "from-pink-500 to-rose-400" },
+  { name: "AI Video Tools", description: "AI video generators, editors and avatar tools.", color: "from-red-500 to-orange-400" },
+  { name: "AI Chatbots & Assistants", description: "ChatGPT, Claude, Gemini and other AI assistants — compared.", color: "from-blue-500 to-cyan-400" },
+  { name: "AI for Business", description: "AI tools for marketing, sales, support and operations.", color: "from-amber-500 to-orange-400" },
+  { name: "AI Productivity Tools", description: "AI note-takers, meeting and workflow-automation tools.", color: "from-indigo-500 to-blue-400" },
+  { name: "Comparisons", description: "Side-by-side, head-to-head AI tool comparisons.", color: "from-violet-500 to-purple-400" },
+  { name: "Guides & Tutorials", description: "Step-by-step how-tos for getting the most from AI tools.", color: "from-teal-500 to-emerald-400" },
 ];
 
 const TAGS = [
-  "Next.js", "React", "TypeScript", "Tailwind CSS", "Node.js",
-  "LLM", "Agents", "Rust", "Python", "DevOps",
-  "Career", "Design", "SEO", "Startups", "Investing",
+  "ChatGPT", "Claude", "Gemini", "Midjourney", "GitHub Copilot",
+  "Free Tools", "Paid Tools", "Alternatives", "Pricing", "Review",
+  "Comparison", "Tutorial", "Writing", "Coding", "Automation",
 ];
 
 const SAMPLE_CONTENT = `<p>This is a sample article body rendered for the demo. In production, this would be loaded from the CMS pipeline.</p>
@@ -54,18 +53,18 @@ const POSTS: Array<{
   featured?: boolean;
   trending?: boolean;
 }> = [
-  { title: "The quiet revolution of agentic LLMs", excerpt: "Why agents are graduating from demos to production — and what the next 12 months look like.", cover: cover("photo-1677442136019-21780ecad995"), category: "Artificial Intelligence", tags: ["LLM", "Agents", "Python"], featured: true, trending: true },
-  { title: "Building resilient edge APIs with Next.js", excerpt: "Patterns for graceful degradation, caching strategy and observability at the edge.", cover: cover("photo-1517694712202-14dd9538aa97"), category: "Programming", tags: ["Next.js", "TypeScript", "DevOps"], trending: true },
-  { title: "The anatomy of a supply chain attack", excerpt: "A breakdown of three real incidents and the defenses that would have caught them earlier.", cover: cover("photo-1550751827-4bd374c3f58b"), category: "Cybersecurity", tags: ["DevOps"], trending: true },
-  { title: "Why pricing is strategy, not a number", excerpt: "Pricing decisions encode positioning.", cover: cover("photo-1551288049-bebda4e38f71"), category: "Business", tags: ["Startups", "Career"] },
-  { title: "A personal finance stack for 2026", excerpt: "The tools, accounts and routines that actually matter.", cover: cover("photo-1554224155-6726b3ff858f"), category: "Finance", tags: ["Investing"] },
-  { title: "Training for longevity, not just strength", excerpt: "What the latest research says about preserving function into your 70s and 80s.", cover: cover("photo-1517836357463-d25dfeac3438"), category: "Health & Fitness", tags: [] },
-  { title: "Why Rust is eating systems programming", excerpt: "From kernels to CDNs, Rust is quietly winning.", cover: cover("photo-1555066931-4365d14bab8c"), category: "Programming", tags: ["Rust", "DevOps"] },
-  { title: "The traveler's remote work kit", excerpt: "A field-tested setup for working from anywhere.", cover: cover("photo-1488646953014-85cb44e25828"), category: "Travel", tags: ["Design"] },
-  { title: "Designing with restraint", excerpt: "The case for fewer features, smaller surfaces and clearer hierarchies.", cover: cover("photo-1545239351-1141bd82e8a6"), category: "Lifestyle", tags: ["Design"] },
-  { title: "Stablecoins quietly ate cross-border payments", excerpt: "The numbers behind the shift, and what it means for fintech in 2026.", cover: cover("photo-1518544866330-95a2bec01ee5"), category: "Crypto", tags: ["Investing"] },
-  { title: "SEO in the age of answer engines", excerpt: "How content strategy is changing when LLMs are the front page.", cover: cover("photo-1432888622747-4eb9a8efeb07"), category: "Digital Marketing", tags: ["SEO"] },
-  { title: "The self-taught engineer's curriculum", excerpt: "A practical path through the fundamentals, with no fluff.", cover: cover("photo-1503676260728-1c00da094a0b"), category: "Education", tags: ["Career", "Python"] },
+  { title: "The 9 best AI writing tools in 2026 (tested)", excerpt: "We tested the top AI writers head-to-head on quality, pricing and ease of use — here's what actually earns your money.", cover: cover("photo-1677442136019-21780ecad995"), category: "AI Writing Tools", tags: ["Review", "Writing", "Comparison"], featured: true, trending: true },
+  { title: "ChatGPT vs Claude vs Gemini: which should you use?", excerpt: "A side-by-side comparison of the three leading AI assistants across writing, coding, reasoning and price.", cover: cover("photo-1526378722484-bd91ca387e72"), category: "Comparisons", tags: ["ChatGPT", "Claude", "Gemini", "Comparison"], trending: true },
+  { title: "GitHub Copilot vs Cursor: the honest comparison", excerpt: "Two AI coding assistants, one workflow test. Which one ships code faster?", cover: cover("photo-1517694712202-14dd9538aa97"), category: "AI Coding Tools", tags: ["GitHub Copilot", "Coding", "Comparison"], trending: true },
+  { title: "7 best free AI image generators (no watermark)", excerpt: "The best genuinely free AI image tools — with their real limits spelled out.", cover: cover("photo-1547891654-e66ed7ebb968"), category: "AI Image Tools", tags: ["Free Tools", "Review", "Midjourney"] },
+  { title: "Best AI video generators for creators in 2026", excerpt: "From text-to-video to AI avatars — which tools are ready for real work.", cover: cover("photo-1574717024653-61fd2cf4d44d"), category: "AI Video Tools", tags: ["Review", "Paid Tools"] },
+  { title: "How to automate your inbox with AI (step by step)", excerpt: "A practical setup for triaging and drafting email with AI — in under an hour.", cover: cover("photo-1554224155-6726b3ff858f"), category: "Guides & Tutorials", tags: ["Tutorial", "Automation"] },
+  { title: "Best AI note-takers for meetings, compared", excerpt: "We ran five AI meeting assistants on the same calls. Accuracy, price and privacy compared.", cover: cover("photo-1552581234-26160f608093"), category: "AI Productivity Tools", tags: ["Review", "Comparison"] },
+  { title: "10 AI tools every small business should use", excerpt: "Affordable AI tools for marketing, support and operations that pay for themselves.", cover: cover("photo-1551288049-bebda4e38f71"), category: "AI for Business", tags: ["Paid Tools", "Automation"] },
+  { title: "Midjourney vs DALL·E vs Stable Diffusion", excerpt: "Which AI image generator wins on quality, control and cost?", cover: cover("photo-1620712943543-bcc4688e7485"), category: "Comparisons", tags: ["Midjourney", "Comparison", "Review"] },
+  { title: "The best ChatGPT alternatives worth trying", excerpt: "Free and paid AI chatbots that go head-to-head with ChatGPT — and where each one wins.", cover: cover("photo-1531746790731-6c087fecd65a"), category: "AI Chatbots & Assistants", tags: ["ChatGPT", "Alternatives", "Free Tools"] },
+  { title: "How to write better prompts (with examples)", excerpt: "A repeatable framework for getting sharper output from any AI tool.", cover: cover("photo-1432888622747-4eb9a8efeb07"), category: "Guides & Tutorials", tags: ["Tutorial", "Writing"] },
+  { title: "Best AI coding assistants for beginners", excerpt: "Learning to code with AI? These assistants teach instead of just autocompleting.", cover: cover("photo-1503676260728-1c00da094a0b"), category: "AI Coding Tools", tags: ["Coding", "Review", "Free Tools"] },
 ];
 
 async function run() {

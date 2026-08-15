@@ -23,19 +23,19 @@ const gaId =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Premium multi-niche blog`,
+    default: `${SITE_NAME} — AI Tools Reviews, Comparisons & Guides`,
     template: `%s · ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
   keywords: [
-    "blog",
-    "technology",
-    "AI",
-    "programming",
-    "cybersecurity",
-    "business",
-    "finance",
-    "lifestyle",
+    "AI tools",
+    "best AI tools",
+    "AI software",
+    "AI tool reviews",
+    "AI tool comparison",
+    "AI writing tools",
+    "AI coding tools",
+    "AI productivity tools",
   ],
   alternates: {
     canonical: "/",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: `${SITE_NAME} — Premium multi-niche blog`,
+    title: `${SITE_NAME} — AI Tools Reviews, Comparisons & Guides`,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
     siteName: SITE_NAME,

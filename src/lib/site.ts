@@ -6,7 +6,7 @@ export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://nexversal.com";
 export const SITE_NAME = "Nexversal";
 export const SITE_DESCRIPTION =
-  "Nexversal is a modern, multi-niche publication covering technology, AI, programming, business, finance, lifestyle and more.";
+  "Nexversal reviews and compares the best AI tools and software — hands-on reviews, side-by-side comparisons, pricing breakdowns and practical how-to guides for writing, coding, images, video, business and productivity.";
 export const SITE_LOCALE = "en_US";
 
 // Author of the site (used in RSS + JSON-LD publisher).

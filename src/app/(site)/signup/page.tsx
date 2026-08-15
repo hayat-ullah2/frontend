@@ -6,13 +6,13 @@ import { Check, Github, Logo, Sparkles, Twitter } from "@/components/Icon";
 
 export const metadata: Metadata = {
   title: "Create account",
-  description: "Join Nexversal — long-form essays for curious minds.",
+  description: "Join Nexversal — AI tool reviews, comparisons and picks in your inbox.",
 };
 
 const perks = [
-  "Weekly digest with one handpicked essay",
-  "Early access to long-form drops",
-  "Private archive of every Nexversal issue",
+  "Weekly digest of the best new AI tools",
+  "Hands-on reviews and honest comparisons",
+  "Exclusive deals and free-tool roundups",
   "Comment, bookmark, and follow authors",
 ];
 

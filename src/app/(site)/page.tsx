@@ -21,14 +21,14 @@ import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: `${SITE_NAME} — Long-form essays on tech, AI & business`,
+  title: `${SITE_NAME} — Best AI Tools, Reviewed & Compared`,
   description:
-    "Curated long-form journalism on technology, artificial intelligence, programming, business, finance, health, and the ideas shaping the next decade.",
+    "Hands-on reviews and side-by-side comparisons of the best AI tools and software — for writing, coding, images, video, marketing and productivity. Real testing, honest trade-offs, practical guides.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: `${SITE_NAME} — Long-form essays on tech, AI & business`,
+    title: `${SITE_NAME} — Best AI Tools, Reviewed & Compared`,
     description:
-      "Curated long-form journalism on technology, AI, business and the ideas shaping the next decade.",
+      "Hands-on reviews and comparisons of the best AI tools and software for writing, coding, images, video and productivity.",
     url: SITE_URL,
     siteName: SITE_NAME,
     type: "website",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE_NAME,
     description:
-      "Curated long-form journalism on technology, AI, business and the ideas shaping the next decade.",
+      "Hands-on reviews and comparisons of the best AI tools and software for writing, coding, images, video and productivity.",
     images: [absoluteUrl("/opengraph-image")],
   },
 };
@@ -118,12 +118,13 @@ export default async function HomePage() {
                 <Sparkles size={12} /> Editor's pick
               </span>
               <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05]">
-                Where curious minds <br />
-                <span className="text-gradient-accent">read deeper.</span>
+                Find the right <br />
+                <span className="text-gradient-accent">AI tool.</span>
               </h1>
               <p className="mt-5 text-foreground-muted text-lg max-w-lg">
-                Long-form essays on technology, AI, business, finance and the ideas
-                shaping the next decade — written by people who do the work.
+                Hands-on reviews and side-by-side comparisons of the best AI tools
+                and software — for writing, coding, images, video and productivity.
+                Tested by people who actually use them.
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <Link href={`/blog/${featured.slug}`} className="btn-primary">

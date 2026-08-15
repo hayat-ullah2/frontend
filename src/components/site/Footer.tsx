@@ -48,8 +48,9 @@ export default async function Footer() {
               </span>
             </Link>
             <p className="mt-4 text-sm text-foreground-muted max-w-sm leading-relaxed">
-              A premium multi-niche publication covering technology, AI, programming,
-              business, finance, lifestyle, and the ideas at their intersection.
+              Independent reviews and comparisons of the best AI tools and
+              software — for writing, coding, images, video, business and
+              productivity. Tested, not just listed.
             </p>
             <div className="mt-5 flex items-center gap-2">
               <a className="btn-ghost p-2 rounded-full" href="#" aria-label="Twitter">
