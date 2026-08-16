@@ -86,9 +86,10 @@ export default function PostForm({
   );
   const [secondaryInput, setSecondaryInput] = useState("");
   const [targetCountries, setTargetCountries] = useState<string[]>(
-    initial?.targetCountries ?? ["global"],
+    // Default new posts to the US market (higher AdSense value + primary audience).
+    initial?.targetCountries ?? ["us"],
   );
-  const [targetLanguage, setTargetLanguage] = useState(initial?.targetLanguage ?? "en");
+  const [targetLanguage, setTargetLanguage] = useState(initial?.targetLanguage ?? "en-US");
   const [searchIntent, setSearchIntent] = useState<SearchIntent | "">(
     (initial?.searchIntent as SearchIntent) ?? "",
   );

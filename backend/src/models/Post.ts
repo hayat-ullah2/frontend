@@ -46,8 +46,9 @@ const postSchema = new Schema(
       type: String,
       enum: ["informational", "commercial", "transactional", "navigational"],
     },
-    targetCountries: [{ type: String, trim: true, lowercase: true }], // country codes: us, ca, au…
-    targetLanguage: { type: String, trim: true }, // e.g. en-US
+    // Default to the US market — highest AdSense value and our primary audience.
+    targetCountries: { type: [{ type: String, trim: true, lowercase: true }], default: ["us"] }, // country codes: us, ca, au…
+    targetLanguage: { type: String, trim: true, default: "en-US" }, // e.g. en-US
     contentCluster: {
       name: { type: String, trim: true, maxlength: 120 },
       pillar: { type: Boolean, default: false },
