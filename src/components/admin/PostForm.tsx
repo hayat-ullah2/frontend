@@ -73,6 +73,9 @@ export default function PostForm({
   );
   const [featured, setFeatured] = useState(initial?.featured ?? false);
   const [trending, setTrending] = useState(initial?.trending ?? false);
+  // Preview overlay — renders the current form content like the live article
+  // so you can review before publishing.
+  const [showPreview, setShowPreview] = useState(false);
   const [seoTitle, setSeoTitle] = useState(initial?.seo?.title ?? "");
   const [seoDesc, setSeoDesc] = useState(initial?.seo?.description ?? "");
   const [seoCanonical, setSeoCanonical] = useState(initial?.seo?.canonical ?? "");
@@ -372,6 +375,14 @@ export default function PostForm({
             <Link href="/admin/blogs" className="btn-ghost text-sm">
               <ArrowLeft size={14} /> Cancel
             </Link>
+            <button
+              type="button"
+              onClick={() => setShowPreview(true)}
+              className="btn-ghost text-sm"
+              title="See how this article will look before publishing"
+            >
+              Preview
+            </button>
             {!isEdit && (
               <button
                 type="button"
@@ -956,6 +967,59 @@ export default function PostForm({
           </div>
         </aside>
       </form>
+
+      {showPreview && (
+        <div
+          className="fixed inset-0 z-[100] overflow-y-auto bg-background/95 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Article preview"
+        >
+          <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-white/10 bg-background/80 backdrop-blur-xl px-6 py-3">
+            <span className="text-xs uppercase tracking-widest text-foreground-subtle">
+              Preview — how your article will look when published
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowPreview(false)}
+              className="btn-primary text-sm"
+            >
+              Close preview
+            </button>
+          </div>
+          <article className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12">
+            {categories.find((c) => c._id === categoryId)?.name && (
+              <span className="chip-accent">
+                {categories.find((c) => c._id === categoryId)?.name}
+              </span>
+            )}
+            <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+              {title || "Untitled article"}
+            </h1>
+            {excerpt && (
+              <p className="mt-4 text-lg text-foreground-muted">{excerpt}</p>
+            )}
+            {cover && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={cover}
+                alt={title}
+                className="mt-8 w-full rounded-2xl border border-white/5 object-cover"
+              />
+            )}
+            {content ? (
+              <div
+                className="prose-article mt-8"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            ) : (
+              <p className="mt-8 italic text-foreground-subtle">
+                No content yet — start writing to see it here.
+              </p>
+            )}
+          </article>
+        </div>
+      )}
     </>
   );
 }
