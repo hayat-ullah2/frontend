@@ -17,8 +17,10 @@ import type { ApiCategory, ApiPost, ApiTag } from "@/lib/models";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
 
-// P4.14 — Regenerate the home page every 5 minutes.
-export const revalidate = 300;
+// Fallback ISR window. On-demand revalidation (the /api/revalidate webhook)
+// refreshes this instantly on publish; this 60s timer is the safety net for
+// when the webhook can't reach the frontend.
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: `${SITE_NAME} — Best AI Tools, Reviewed & Compared`,

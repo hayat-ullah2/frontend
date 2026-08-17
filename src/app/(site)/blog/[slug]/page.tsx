@@ -22,7 +22,8 @@ import { SITE_NAME, absoluteUrl } from "@/lib/site";
 
 // P4.14 — Regenerate an individual post every 5 minutes (also revalidated on
 // demand via /api/revalidate when the admin edits/publishes).
-export const revalidate = 300;
+// 60s fallback; the /api/revalidate webhook refreshes this instantly on publish.
+export const revalidate = 60;
 
 // P4.14 — Prebuild the 50 most recent posts at build time. Older posts are
 // generated on-demand and then cached.

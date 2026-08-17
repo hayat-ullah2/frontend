@@ -13,7 +13,8 @@ import { SITE_NAME, absoluteUrl } from "@/lib/site";
 const PAGE_SIZE = 12;
 
 // P4.14 — Regenerate category pages every 5 minutes.
-export const revalidate = 300;
+// 60s fallback; the /api/revalidate webhook refreshes this instantly on publish.
+export const revalidate = 60;
 
 export async function generateMetadata(
   props: PageProps<"/category/[slug]">,
