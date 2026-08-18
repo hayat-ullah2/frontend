@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 };
 
 const perks = [
-  "Weekly digest of the best new AI tools",
-  "Hands-on reviews and honest comparisons",
-  "Exclusive deals and free-tool roundups",
+  "New AI tool reviews in your inbox",
+  "In-depth reviews and honest comparisons",
+  "Free-tool roundups and deals when we find them",
   "Comment, bookmark, and follow authors",
 ];
 

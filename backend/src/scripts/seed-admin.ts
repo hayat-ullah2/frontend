@@ -7,7 +7,7 @@ setServers(["1.1.1.1", "8.8.8.8", "1.0.0.1", "8.8.4.4"]);
 
 const ADMIN_EMAIL = "admin@nexes.com";
 const ADMIN_PASSWORD = "admin123";
-const ADMIN_NAME = "NexBlog Admin";
+const ADMIN_NAME = "Nexversal Admin";
 
 async function run() {
   await connectDB();

@@ -67,10 +67,10 @@ export default function LeadMagnet({
       {done ? (
         <div className="mt-4">
           <h3 className="text-xl font-bold tracking-tight flex items-center gap-2">
-            <Check size={18} className="text-emerald-400" /> Check your inbox
+            <Check size={18} className="text-emerald-400" /> You&apos;re all set
           </h3>
           <p className="mt-2 text-sm text-foreground-muted">
-            We&apos;ve emailed your copy{email ? ` to ${email}` : ""}. You can also open it right now:
+            Thanks for subscribing — here&apos;s your copy. Open it right now:
           </p>
           <Link href={resourceHref} className="btn-primary text-sm mt-4">
             Open the resource <ArrowRight size={14} />

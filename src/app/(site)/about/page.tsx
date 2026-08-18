@@ -45,9 +45,13 @@ export default function AboutPage() {
             <span className="text-gradient-accent">actually ship.</span>
           </h1>
           <p className="mt-5 text-foreground-muted text-lg max-w-2xl mx-auto">
-            Nexversal is an independent publication about AI tools and developer
-            tooling for founders and engineers. We test what we write about and
-            choose depth over volume.
+            Nexversal is an independent publication about AI tools and software
+            for founders, marketers and creators. We research every tool against
+            its live product, pricing and documentation — see{" "}
+            <Link href="/how-we-test" className="underline hover:text-foreground">
+              how we test
+            </Link>
+            .
           </p>
           <div className="mt-8">
             <Link href="/blog" className="btn-primary inline-flex">
@@ -73,8 +77,8 @@ export default function AboutPage() {
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Our mission</h2>
             <p className="mt-4 text-foreground-muted leading-relaxed">
               There is no shortage of AI-tool listicles. There is a shortage of
-              honest, hands-on guidance that helps a founder or engineer pick the
-              right tool and get it working.
+              honest, research-backed guidance that helps you pick the right tool
+              and get it working.
             </p>
             <p className="mt-3 text-foreground-muted leading-relaxed">
               Nexversal exists to publish exactly that — evaluated recommendations,

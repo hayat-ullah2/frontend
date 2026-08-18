@@ -48,23 +48,23 @@ export default function Newsletter({ source = "site" }: { source?: string }) {
       <div className="relative grid lg:grid-cols-2 gap-8 items-center">
         <div>
           <span className="chip">
-            <Sparkles size={12} /> Weekly digest
+            <Sparkles size={12} /> Newsletter
           </span>
           <h2 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight">
-            The best of Nexversal,{" "}
-            <span className="text-gradient-accent">delivered Sundays.</span>
+            New AI tool reviews,{" "}
+            <span className="text-gradient-accent">in your inbox.</span>
           </h2>
           <p className="mt-3 text-foreground-muted max-w-md">
-            One handpicked essay, three sharp links, and zero noise — straight to
-            your inbox. Unsubscribe anytime.
+            Get new reviews and comparisons in your inbox. No spam, unsubscribe
+            anytime.
           </p>
         </div>
 
         {done ? (
           <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-200 p-5">
-            <p className="font-semibold">You're in. ✨</p>
+            <p className="font-semibold">You&apos;re in. ✨</p>
             <p className="text-sm opacity-80 mt-1">
-              We'll see you in the next Sunday digest.
+              We&apos;ll email you new reviews and comparisons as we publish them.
             </p>
           </div>
         ) : (

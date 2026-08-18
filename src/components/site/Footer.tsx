@@ -20,6 +20,8 @@ export default async function Footer() {
         { href: "/", label: "Home" },
         { href: "/blog", label: "All Articles" },
         { href: "/about", label: "About" },
+        { href: "/how-we-test", label: "How we test" },
+        { href: "/editorial-policy", label: "Editorial policy" },
         { href: "/contact", label: "Contact" },
       ],
     },
