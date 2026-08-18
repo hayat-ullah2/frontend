@@ -56,6 +56,8 @@ function str(v: unknown): string | undefined {
 /** Persistable analysis snapshot fields derived from an analysis. */
 function analysisFields(a: SeoAnalysis) {
   return {
+    // Persist the computed read-time on every save so it's never left at 0.
+    readingTime: a.metrics.readingTimeMin,
     seoScore: a.score,
     seoScores: {
       keyword: a.categories.keyword.score,

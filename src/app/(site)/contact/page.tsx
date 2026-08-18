@@ -4,7 +4,6 @@ import {
   Github,
   Linkedin,
   Mail,
-  MapPin,
   Phone,
   Sparkles,
   Twitter,
@@ -18,23 +17,23 @@ export const metadata: Metadata = {
 const faqs = [
   {
     q: "How can I pitch an article?",
-    a: "Send a one-paragraph pitch to pitches@nexversal.com. We respond to every pitch within five business days, whether we take it or not.",
+    a: "Send a one-paragraph pitch to hello@nexversal.com. We're a small editorial operation, so replies can take up to two weeks.",
   },
   {
     q: "Do you pay writers?",
-    a: "Yes. Our standard rate is $0.40 per word, with bonuses for evergreen pieces that continue performing six months in.",
+    a: "When we commission a piece, we agree on rates with the writer directly. Send your pitch to hello@nexversal.com and we'll take it from there.",
   },
   {
     q: "Can I republish a Nexversal article?",
-    a: "For non-commercial use with attribution, yes. For commercial syndication, please email partnerships@nexversal.com.",
+    a: "For non-commercial use with attribution, yes. For commercial syndication, please email hello@nexversal.com.",
   },
   {
     q: "How do you choose what to cover?",
-    a: "Editorial decisions are made weekly by the editor in chief and two rotating editors. We aim for depth, not chasing news cycles.",
+    a: "Editorial decisions are made by our editorial team. We aim for depth, not chasing news cycles.",
   },
   {
     q: "Where can I report a correction?",
-    a: "Use the correction link at the bottom of any article, or email corrections@nexversal.com. We aim to update within 24 hours.",
+    a: "Use the correction link at the bottom of any article, or email hello@nexversal.com. We aim to update within a few days.",
   },
 ];
 
@@ -59,7 +58,7 @@ export default function ContactPage() {
           </h1>
           <p className="mt-4 text-foreground-muted text-lg">
             Pitches, partnerships, press, corrections, or just a hello — pick the
-            channel that fits and we'll write back.
+            channel that fits and we&apos;ll write back.
           </p>
         </div>
       </section>
@@ -73,9 +72,18 @@ export default function ContactPage() {
           <div className="card p-6">
             <h3 className="font-semibold">Direct lines</h3>
             <div className="mt-4 space-y-4">
-              <Line icon={<Mail size={16} />} label="Email" value="hello@nexversal.com" />
-              <Line icon={<Phone size={16} />} label="Phone" value="+41 22 555 0142" />
-              <Line icon={<MapPin size={16} />} label="Office" value="Limmatquai 12, 8001 Zürich" />
+              <Line
+                icon={<Mail size={16} />}
+                label="Email"
+                value="hello@nexversal.com"
+                href="mailto:hello@nexversal.com"
+              />
+              <Line
+                icon={<Phone size={16} />}
+                label="Phone"
+                value="+92 336 7828946"
+                href="tel:+923367828946"
+              />
             </div>
           </div>
           <div className="card p-6">
@@ -134,10 +142,12 @@ function Line({
   icon,
   label,
   value,
+  href,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
+  href?: string;
 }) {
   return (
     <div className="flex items-center gap-3">
@@ -146,7 +156,13 @@ function Line({
       </div>
       <div>
         <p className="text-xs text-foreground-subtle uppercase tracking-wider">{label}</p>
-        <p className="text-sm">{value}</p>
+        {href ? (
+          <a href={href} className="text-sm hover:text-foreground hover:underline transition">
+            {value}
+          </a>
+        ) : (
+          <p className="text-sm">{value}</p>
+        )}
       </div>
     </div>
   );
