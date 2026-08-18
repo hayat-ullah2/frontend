@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ImageUploader from "@/components/admin/ImageUploader";
+import RichTextEditor, { type RichTextEditorHandle } from "@/components/admin/RichTextEditor";
 import SeoPanel from "@/components/admin/SeoPanel";
 import { ApiError } from "@/lib/api";
 import type { ApiAffiliateLink, ApiCategory, ApiPost, ApiTag } from "@/lib/models";
@@ -58,7 +59,7 @@ export default function PostForm({
   const [content, setContent] = useState(initial?.content ?? "");
   const [cover, setCover] = useState(initial?.cover ?? "");
   const [coverPublicId, setCoverPublicId] = useState<string | undefined>(undefined);
-  const contentRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<RichTextEditorHandle>(null);
   const inlineFileRef = useRef<HTMLInputElement>(null);
   const [inlineUploading, setInlineUploading] = useState(false);
   const [categoryId, setCategoryId] = useState(
@@ -246,11 +247,7 @@ export default function PostForm({
   }
 
   function insertInternalLink(targetSlug: string, text: string) {
-    insertAtCursor(
-      contentRef.current,
-      `<a href="/blog/${targetSlug}">${text}</a>`,
-      setContent,
-    );
+    editorRef.current?.insertHTML(`<a href="/blog/${targetSlug}">${text}</a>`);
   }
 
   function addSecondaryKeyword() {
@@ -485,191 +482,64 @@ export default function PostForm({
 
           <div className="card p-6 space-y-3">
             <Label>Content</Label>
-            <div className="flex flex-wrap items-center gap-1 p-1.5 rounded-lg bg-background border border-white/10">
-              <ToolBtn
-                title="Bold (Ctrl+B)"
-                onClick={() => wrapSelection(contentRef.current, "<strong>", "</strong>", setContent)}
-              >
-                <span className="font-bold">B</span>
-              </ToolBtn>
-              <ToolBtn
-                title="Italic (Ctrl+I)"
-                onClick={() => wrapSelection(contentRef.current, "<em>", "</em>", setContent)}
-              >
-                <span className="italic">I</span>
-              </ToolBtn>
-              <ToolBtn
-                title="Underline (Ctrl+U)"
-                onClick={() => wrapSelection(contentRef.current, "<u>", "</u>", setContent)}
-              >
-                <span className="underline">U</span>
-              </ToolBtn>
-              <ToolBtn
-                title="Strikethrough"
-                onClick={() => wrapSelection(contentRef.current, "<s>", "</s>", setContent)}
-              >
-                <span className="line-through">S</span>
-              </ToolBtn>
+            {/* Hidden uploader — the editor's image button triggers this. */}
+            <input
+              ref={inlineFileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.currentTarget.value = "";
+                if (!file) return;
 
-              <Divider />
-
-              <ToolBtn
-                title="Heading 2"
-                onClick={() => wrapBlock(contentRef.current, "<h2>", "</h2>", setContent)}
-              >
-                H2
-              </ToolBtn>
-              <ToolBtn
-                title="Heading 3"
-                onClick={() => wrapBlock(contentRef.current, "<h3>", "</h3>", setContent)}
-              >
-                H3
-              </ToolBtn>
-              <ToolBtn
-                title="Paragraph"
-                onClick={() => wrapBlock(contentRef.current, "<p>", "</p>", setContent)}
-              >
-                P
-              </ToolBtn>
-
-              <Divider />
-
-              <ToolBtn
-                title="Blockquote"
-                onClick={() => wrapBlock(contentRef.current, "<blockquote>", "</blockquote>", setContent)}
-              >
-                ❝
-              </ToolBtn>
-              <ToolBtn
-                title="Inline code"
-                onClick={() => wrapSelection(contentRef.current, "<code>", "</code>", setContent)}
-              >
-                {"</>"}
-              </ToolBtn>
-              <ToolBtn
-                title="Code block"
-                onClick={() => wrapBlock(contentRef.current, "<pre><code>", "</code></pre>", setContent)}
-              >
-                {"{ }"}
-              </ToolBtn>
-
-              <Divider />
-
-              <ToolBtn
-                title="Bulleted list"
-                onClick={() => insertList(contentRef.current, "ul", setContent)}
-              >
-                •
-              </ToolBtn>
-              <ToolBtn
-                title="Numbered list"
-                onClick={() => insertList(contentRef.current, "ol", setContent)}
-              >
-                1.
-              </ToolBtn>
-
-              <Divider />
-
-              <ToolBtn
-                title="Link"
-                onClick={() => insertLink(contentRef.current, setContent)}
-              >
-                🔗
-              </ToolBtn>
-              <ToolBtn
-                title="Horizontal rule"
-                onClick={() =>
-                  insertAtCursor(contentRef.current, "\n<hr />\n", setContent)
+                // Require alt text before we upload / insert. Min 5 chars.
+                let alt = "";
+                while (alt.trim().length < 5) {
+                  const answer = window.prompt(
+                    "Alt text for this image (min 5 characters, required for SEO & accessibility):",
+                    "",
+                  );
+                  if (answer === null) return; // user cancelled
+                  alt = answer;
+                  if (alt.trim().length < 5) {
+                    window.alert("Alt text must be at least 5 characters.");
+                  }
                 }
-              >
-                —
-              </ToolBtn>
+                const safeAlt = alt
+                  .trim()
+                  .replace(/&/g, "&amp;")
+                  .replace(/"/g, "&quot;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;");
 
-              <div className="ml-auto">
-                <ToolBtn
-                  title="Insert image (upload)"
-                  disabled={inlineUploading}
-                  onClick={() => inlineFileRef.current?.click()}
-                >
-                  {inlineUploading ? "…" : "🖼"}{" "}
-                  <span className="ml-1 hidden sm:inline">Image</span>
-                </ToolBtn>
-              </div>
-
-              <input
-                ref={inlineFileRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  e.currentTarget.value = "";
-                  if (!file) return;
-
-                  // P5.18 — Require alt text before we upload / insert. Min 5 chars.
-                  let alt = "";
-                  while (alt.trim().length < 5) {
-                    const answer = window.prompt(
-                      "Alt text for this image (min 5 characters, required for SEO & accessibility):",
-                      "",
-                    );
-                    if (answer === null) return; // user cancelled
-                    alt = answer;
-                    if (alt.trim().length < 5) {
-                      window.alert("Alt text must be at least 5 characters.");
-                    }
-                  }
-                  const safeAlt = alt
-                    .trim()
-                    .replace(/&/g, "&amp;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;");
-
-                  setError(null);
-                  setInlineUploading(true);
-                  try {
-                    const result = await uploadImage(file);
-                    insertAtCursor(
-                      contentRef.current,
-                      `\n<img src="${result.url}" alt="${safeAlt}" />\n`,
-                      setContent,
-                    );
-                  } catch (err) {
-                    setError(
-                      err instanceof ApiError ? err.message : "Image upload failed.",
-                    );
-                  } finally {
-                    setInlineUploading(false);
-                  }
-                }}
-              />
-            </div>
-
-            <textarea
-              ref={contentRef}
-              rows={18}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              onKeyDown={(e) => {
-                if (!(e.ctrlKey || e.metaKey)) return;
-                const k = e.key.toLowerCase();
-                if (k === "b") {
-                  e.preventDefault();
-                  wrapSelection(contentRef.current, "<strong>", "</strong>", setContent);
-                } else if (k === "i") {
-                  e.preventDefault();
-                  wrapSelection(contentRef.current, "<em>", "</em>", setContent);
-                } else if (k === "u") {
-                  e.preventDefault();
-                  wrapSelection(contentRef.current, "<u>", "</u>", setContent);
+                setError(null);
+                setInlineUploading(true);
+                try {
+                  const result = await uploadImage(file);
+                  editorRef.current?.insertHTML(
+                    `<img src="${result.url}" alt="${safeAlt}" />`,
+                  );
+                } catch (err) {
+                  setError(
+                    err instanceof ApiError ? err.message : "Image upload failed.",
+                  );
+                } finally {
+                  setInlineUploading(false);
                 }
               }}
-              placeholder="Start writing the post… Select text and click a toolbar button to format it. HTML supported."
-              className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none resize-y font-mono"
             />
-            <div className="flex items-center justify-between text-xs text-foreground-subtle">
-              <span>HTML supported · select text + click toolbar</span>
+
+            <RichTextEditor
+              ref={editorRef}
+              value={content}
+              onChange={setContent}
+              onImageClick={() => inlineFileRef.current?.click()}
+              imageBusy={inlineUploading}
+              placeholder="Start writing… use the toolbar to format (headings, bold, lists, links, images). Saved as clean HTML automatically."
+            />
+
+            <div className="flex items-center justify-end text-xs text-foreground-subtle">
               <span>
                 {wordCount(content)} words ·{" "}
                 {Math.max(1, Math.round(wordCount(content) / 220))} min read
@@ -1036,147 +906,6 @@ export default function PostForm({
 
 function wordCount(s: string) {
   return s.trim().split(/\s+/).filter(Boolean).length;
-}
-
-function insertAtCursor(
-  el: HTMLTextAreaElement | null,
-  snippet: string,
-  setValue: (v: string) => void,
-) {
-  if (!el) return setValue((el ?? { value: "" }).value + snippet);
-  const start = el.selectionStart ?? el.value.length;
-  const end = el.selectionEnd ?? el.value.length;
-  const next = el.value.slice(0, start) + snippet + el.value.slice(end);
-  setValue(next);
-  // Restore caret after React re-renders.
-  requestAnimationFrame(() => {
-    el.focus();
-    const pos = start + snippet.length;
-    el.setSelectionRange(pos, pos);
-  });
-}
-
-/**
- * Wraps the current selection in [openTag][selection][closeTag]. If nothing
- * is selected, drops the tags at the cursor and places the caret between them
- * so the user can start typing.
- */
-function wrapSelection(
-  el: HTMLTextAreaElement | null,
-  open: string,
-  close: string,
-  setValue: (v: string) => void,
-) {
-  if (!el) return;
-  const start = el.selectionStart ?? el.value.length;
-  const end = el.selectionEnd ?? el.value.length;
-  const selected = el.value.slice(start, end);
-  const next = el.value.slice(0, start) + open + selected + close + el.value.slice(end);
-  setValue(next);
-  requestAnimationFrame(() => {
-    el.focus();
-    if (selected) {
-      const a = start + open.length;
-      const b = a + selected.length;
-      el.setSelectionRange(a, b);
-    } else {
-      const pos = start + open.length;
-      el.setSelectionRange(pos, pos);
-    }
-  });
-}
-
-/** Same as wrapSelection but for block-level tags — adds newlines for readability. */
-function wrapBlock(
-  el: HTMLTextAreaElement | null,
-  open: string,
-  close: string,
-  setValue: (v: string) => void,
-) {
-  if (!el) return;
-  const start = el.selectionStart ?? el.value.length;
-  const end = el.selectionEnd ?? el.value.length;
-  const selected = el.value.slice(start, end) || "your text";
-  const snippet = `\n${open}${selected}${close}\n`;
-  const next = el.value.slice(0, start) + snippet + el.value.slice(end);
-  setValue(next);
-  requestAnimationFrame(() => {
-    el.focus();
-    const a = start + 1 + open.length;
-    const b = a + selected.length;
-    el.setSelectionRange(a, b);
-  });
-}
-
-function insertList(
-  el: HTMLTextAreaElement | null,
-  kind: "ul" | "ol",
-  setValue: (v: string) => void,
-) {
-  if (!el) return;
-  const start = el.selectionStart ?? el.value.length;
-  const end = el.selectionEnd ?? el.value.length;
-  const selected = el.value.slice(start, end);
-  const items = selected.trim() ? selected.split(/\n+/) : ["Item one", "Item two"];
-  const inner = items.map((i) => `  <li>${i || "&nbsp;"}</li>`).join("\n");
-  const snippet = `\n<${kind}>\n${inner}\n</${kind}>\n`;
-  const next = el.value.slice(0, start) + snippet + el.value.slice(end);
-  setValue(next);
-  requestAnimationFrame(() => {
-    el.focus();
-    const pos = start + snippet.length;
-    el.setSelectionRange(pos, pos);
-  });
-}
-
-function insertLink(
-  el: HTMLTextAreaElement | null,
-  setValue: (v: string) => void,
-) {
-  if (!el) return;
-  const start = el.selectionStart ?? el.value.length;
-  const end = el.selectionEnd ?? el.value.length;
-  const selected = el.value.slice(start, end);
-  const url = window.prompt("Link URL", "https://");
-  if (!url) return;
-  const text = selected || window.prompt("Link text", "link") || "link";
-  const snippet = `<a href="${url}" target="_blank" rel="noreferrer">${text}</a>`;
-  const next = el.value.slice(0, start) + snippet + el.value.slice(end);
-  setValue(next);
-  requestAnimationFrame(() => {
-    el.focus();
-    const pos = start + snippet.length;
-    el.setSelectionRange(pos, pos);
-  });
-}
-
-function ToolBtn({
-  children,
-  onClick,
-  title,
-  disabled,
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-  title: string;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      title={title}
-      aria-label={title}
-      className="min-w-[34px] h-8 px-2 rounded-md text-xs text-foreground-muted hover:text-foreground hover:bg-white/5 grid place-items-center disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      {children}
-    </button>
-  );
-}
-
-function Divider() {
-  return <span className="w-px h-5 bg-white/10 mx-0.5" aria-hidden="true" />;
 }
 
 function Label({ children }: { children: React.ReactNode }) {
