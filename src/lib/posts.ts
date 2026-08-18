@@ -6,6 +6,7 @@ export type PostInput = {
   title: string;
   slug?: string;
   excerpt?: string;
+  authorName?: string;
   content: string;
   cover?: string;
   coverPublicId?: string;

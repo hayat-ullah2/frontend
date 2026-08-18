@@ -37,6 +37,7 @@ const router = Router();
 
 // Optional SEO/geo field validators shared by create + update.
 const seoFieldValidators = [
+  body("authorName").optional().isString().trim().isLength({ max: 120 }),
   body("primaryKeyword").optional().isString().trim().isLength({ max: 120 }),
   body("secondaryKeywords").optional().isArray({ max: 20 }),
   body("secondaryKeywords.*").optional().isString().trim().isLength({ max: 120 }),

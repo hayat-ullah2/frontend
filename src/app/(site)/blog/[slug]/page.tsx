@@ -19,7 +19,7 @@ import { apiPublic, apiPublicSafe } from "@/lib/apiServer";
 import { ApiError } from "@/lib/api";
 import type { ApiComment, ApiPost } from "@/lib/models";
 import { blogPostingSchema, breadcrumbSchema, faqSchema } from "@/lib/schema";
-import { SITE_NAME, absoluteUrl } from "@/lib/site";
+import { SITE_NAME, VIEWS_DISPLAY_THRESHOLD, absoluteUrl } from "@/lib/site";
 
 // P4.14 — Regenerate an individual post every 5 minutes (also revalidated on
 // demand via /api/revalidate when the admin edits/publishes).
@@ -58,7 +58,7 @@ export async function generateMetadata(
         type: "article",
         publishedTime: post.publishedAt,
         modifiedTime: post.updatedAt ?? post.publishedAt,
-        authors: [post.author?.name].filter(Boolean) as string[],
+        authors: [post.authorName].filter(Boolean) as string[],
         images: cover.map((c) => ({ url: c, width: 1200, height: 630, alt: post.title })),
         tags: post.tags?.map((t) => t.name),
       },
@@ -142,30 +142,14 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
 
             {/* Byline bar */}
             <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-white/10 py-4 text-sm">
-              <Link
-                href={`/author/${post.author._id}`}
-                className="flex items-center gap-2 group"
-              >
-                {post.author.avatar ? (
-                  <Image
-                    src={post.author.avatar}
-                    alt={post.author.name}
-                    width={28}
-                    height={28}
-                    className="rounded-full object-cover h-7 w-7"
-                  />
-                ) : (
-                  <span className="w-7 h-7 rounded-full bg-gradient-accent grid place-items-center text-white text-[10px] font-bold">
-                    {post.author.name.charAt(0)}
-                  </span>
-                )}
+              {/* Public author: only shown when the content team has assigned a
+                  legitimate author. Never falls back to the admin account. */}
+              {post.authorName && (
                 <span className="text-foreground-muted">
-                  By{" "}
-                  <span className="text-foreground font-medium group-hover:underline">
-                    {post.author.name}
-                  </span>
+                  Written by{" "}
+                  <span className="text-foreground font-medium">{post.authorName}</span>
                 </span>
-              </Link>
+              )}
               {post.publishedAt && (
                 <span className="text-foreground-subtle">
                   {new Date(post.publishedAt).toLocaleDateString("en-US", {
@@ -185,12 +169,16 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
                   })}
                 </span>
               )}
-              <span className="flex items-center gap-1 text-foreground-subtle">
-                <Clock size={14} /> {post.readingTime} min read
-              </span>
-              <span className="flex items-center gap-1 text-foreground-subtle">
-                <Eye size={14} /> {formatNum(post.views)} views
-              </span>
+              {post.readingTime >= 1 && (
+                <span className="flex items-center gap-1 text-foreground-subtle">
+                  <Clock size={14} /> {post.readingTime} min read
+                </span>
+              )}
+              {post.views >= VIEWS_DISPLAY_THRESHOLD && (
+                <span className="flex items-center gap-1 text-foreground-subtle">
+                  <Eye size={14} /> {formatNum(post.views)} views
+                </span>
+              )}
             </div>
           </div>
 

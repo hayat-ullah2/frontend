@@ -54,7 +54,6 @@ export function websiteSchema() {
 
 export function blogPostingSchema(post: ApiPost) {
   const url = absoluteUrl(`/blog/${post.slug}`);
-  const authorUrl = absoluteUrl(`/author/${post.author._id}`);
   // Task 8d — surface schema gaps in dev so they get fixed before publish.
   if (process.env.NODE_ENV !== "production") {
     if (!post.publishedAt) console.warn(`[schema] ${post.slug} missing datePublished`);
@@ -68,11 +67,12 @@ export function blogPostingSchema(post: ApiPost) {
     image: post.cover ? [post.cover] : undefined,
     datePublished: post.publishedAt,
     dateModified: (post as ApiPost & { updatedAt?: string }).updatedAt ?? post.publishedAt,
+    // Public author: the legitimately-assigned writer, or the approved editorial
+    // identity as a fallback — never the admin account that created the post.
     author: [
       {
         "@type": "Person",
-        name: post.author?.name ?? SITE_AUTHOR,
-        url: authorUrl,
+        name: post.authorName || SITE_AUTHOR,
       },
     ],
     publisher,

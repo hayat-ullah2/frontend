@@ -53,6 +53,8 @@ export default function PostForm({
   const [title, setTitle] = useState(initial?.title ?? "");
   const [slug, setSlug] = useState(initial?.slug ?? "");
   const [excerpt, setExcerpt] = useState(initial?.excerpt ?? "");
+  // Public display author (legitimate writer), separate from the admin account.
+  const [authorName, setAuthorName] = useState(initial?.authorName ?? "");
   const [content, setContent] = useState(initial?.content ?? "");
   const [cover, setCover] = useState(initial?.cover ?? "");
   const [coverPublicId, setCoverPublicId] = useState<string | undefined>(undefined);
@@ -304,6 +306,7 @@ export default function PostForm({
         title: title.trim(),
         slug: (slug || autoSlug) || undefined,
         excerpt: excerpt.trim() || undefined,
+        authorName: authorName.trim() || undefined,
         content,
         cover: cover.trim() || undefined,
         coverPublicId,
@@ -462,6 +465,13 @@ export default function PostForm({
               onChange={setSlug}
               placeholder={autoSlug || "auto-generated-from-title"}
               hint={`URL: /blog/${slug || autoSlug || "your-slug"}`}
+            />
+            <Field
+              label="Author"
+              value={authorName}
+              onChange={setAuthorName}
+              placeholder="e.g. Hayat Ullah — the legitimate writer"
+              hint="Shown on the article page, never on cards. Leave empty to show no author — it never falls back to the admin account."
             />
             <Field
               label="Excerpt"

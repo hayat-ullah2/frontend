@@ -58,20 +58,16 @@ export default async function HomePage() {
     apiPublicSafe<ApiCategory[]>("/categories", []),
   ]);
 
-  // Featured authors = unique authors of recently published posts.
-  // Derived from posts so we never expose admin accounts as "authors" unless
-  // they've actually published something publicly. Names only — no roles/emails.
+  // Featured authors = the unique, legitimately-assigned display authors
+  // (post.authorName). We never expose the admin account — if no posts have a
+  // real author assigned yet, the block simply hides. Names only.
   const seenAuthors = new Set<string>();
-  const authors: { _id: string; name: string; avatar?: string }[] = [];
+  const authors: { name: string }[] = [];
   for (const p of posts) {
-    if (!p.author?._id) continue;
-    if (seenAuthors.has(p.author._id)) continue;
-    seenAuthors.add(p.author._id);
-    authors.push({
-      _id: p.author._id,
-      name: p.author.name,
-      avatar: p.author.avatar,
-    });
+    const name = p.authorName?.trim();
+    if (!name || seenAuthors.has(name)) continue;
+    seenAuthors.add(name);
+    authors.push({ name });
     if (authors.length >= 4) break;
   }
 
@@ -118,7 +114,7 @@ export default async function HomePage() {
           <div className="grid lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-5 animate-fade-in-up">
               <span className="chip">
-                <Sparkles size={12} /> Editor's pick
+                <Sparkles size={12} /> Editor&apos;s pick
               </span>
               <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05]">
                 Find the right <br />
@@ -173,10 +169,12 @@ export default async function HomePage() {
                     {featured.excerpt}
                   </p>
                   <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-                    <span>{featured.author?.name}</span>
-                    <span className="flex items-center gap-1 text-foreground-subtle">
-                      <Clock size={14} /> {featured.readingTime} min read
-                    </span>
+                    {featured.authorName && <span>{featured.authorName}</span>}
+                    {featured.readingTime >= 1 && (
+                      <span className="flex items-center gap-1 text-foreground-subtle">
+                        <Clock size={14} /> {featured.readingTime} min read
+                      </span>
+                    )}
                     <span className="flex items-center gap-1 text-foreground-subtle">
                       <Eye size={14} /> {formatNum(featured.views)} views
                     </span>
@@ -282,16 +280,10 @@ export default async function HomePage() {
           />
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
             {authors.map((a) => (
-              <div key={a._id} className="card p-6 text-center">
-                {a.avatar ? (
-                  <div className="relative mx-auto w-20 h-20 rounded-full overflow-hidden ring-2 ring-white/5">
-                    <Image src={a.avatar} alt={a.name} fill sizes="80px" className="object-cover" />
-                  </div>
-                ) : (
-                  <div className="mx-auto w-20 h-20 rounded-full bg-gradient-accent grid place-items-center text-white text-2xl font-bold">
-                    {a.name[0]}
-                  </div>
-                )}
+              <div key={a.name} className="card p-6 text-center">
+                <div className="mx-auto w-20 h-20 rounded-full bg-gradient-accent grid place-items-center text-white text-2xl font-bold">
+                  {a.name[0]}
+                </div>
                 <h3 className="mt-4 font-semibold">{a.name}</h3>
                 <p className="text-xs text-foreground-subtle">Author</p>
               </div>

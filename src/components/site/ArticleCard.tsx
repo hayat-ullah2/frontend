@@ -16,7 +16,6 @@ export default function ArticleCard({
   priority?: boolean;
 }) {
   const cover = post.cover ?? "/placeholder.png";
-  const author = post.author;
   const category = post.category;
 
   if (variant === "horizontal") {
@@ -79,8 +78,7 @@ export default function ArticleCard({
           <h3 className="font-semibold text-base leading-snug line-clamp-2 group-hover:text-gradient-accent">
             {post.title}
           </h3>
-          <div className="mt-3 flex items-center justify-between text-xs text-foreground-subtle">
-            <span>{author?.name}</span>
+          <div className="mt-3 flex items-center justify-end text-xs text-foreground-subtle">
             {post.readingTime >= 1 && (
               <span className="flex items-center gap-1">
                 <Clock size={12} /> {post.readingTime}m
@@ -115,28 +113,7 @@ export default function ArticleCard({
           {post.title}
         </h3>
         <p className="mt-2 text-sm text-foreground-muted line-clamp-2">{post.excerpt}</p>
-        <div className="mt-5 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {author?.avatar ? (
-              <Image
-                src={author.avatar}
-                alt={author.name}
-                width={28}
-                height={28}
-                className="rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-7 h-7 rounded-full bg-gradient-accent grid place-items-center text-white text-[10px] font-bold">
-                {author?.name?.[0] ?? "?"}
-              </div>
-            )}
-            <div className="text-xs">
-              <p className="text-foreground">{author?.name}</p>
-              <p className="text-foreground-subtle">
-                {post.publishedAt ? formatDate(post.publishedAt) : ""}
-              </p>
-            </div>
-          </div>
+        <div className="mt-5 flex items-center justify-end">
           <div className="flex items-center gap-3 text-xs text-foreground-subtle">
             {post.readingTime >= 1 && (
               <span className="flex items-center gap-1">
@@ -155,13 +132,6 @@ export default function ArticleCard({
   );
 }
 
-function formatDate(d: string) {
-  return new Date(d).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 function formatNum(n: number) {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
   return n.toString();

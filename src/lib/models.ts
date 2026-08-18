@@ -59,6 +59,9 @@ export type ApiPost = {
   faqs?: ApiFaq[];
   category: Pick<ApiCategory, "_id" | "name" | "slug" | "color">;
   author: Pick<ApiUser, "_id" | "name" | "avatar" | "role"> & { bio?: string };
+  // Public display author assigned by the content team (separate from the admin
+  // `author` account). Empty = no author shown publicly.
+  authorName?: string;
   tags: Pick<ApiTag, "_id" | "name" | "slug">[];
   seo?: { title?: string; description?: string; canonical?: string; ogImage?: string; noindex?: boolean };
 

@@ -12,7 +12,13 @@ const postSchema = new Schema(
 
     category: { type: Schema.Types.ObjectId, ref: "Category", required: true, index: true },
     tags: [{ type: Schema.Types.ObjectId, ref: "Tag" }],
+    // Internal ownership — the admin/user account that created the post.
     author: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
+    // PUBLIC display author (the legitimate writer the SEO/content team assigns).
+    // Separate from `author` above — the admin who creates a post is NOT
+    // automatically its public author. Empty = no author shown (never falls back
+    // to the admin account name).
+    authorName: { type: String, trim: true, maxlength: 120 },
 
     status: {
       type: String,
