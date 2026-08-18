@@ -25,6 +25,12 @@ export const env = {
     | "none"
     | "lax"
     | "strict",
+  // Optional shared cookie domain. Set to ".nexversal.com" when the frontend
+  // (nexversal.com) and API (api.nexversal.com) are subdomains of the same site,
+  // so the auth cookie is readable by BOTH — required for the Vercel server to
+  // forward it to the API on admin/server-rendered pages. Leave unset for
+  // localhost (host-only cookie).
+  cookieDomain: process.env.COOKIE_DOMAIN || undefined,
   rateLimitWindowMs: Number(process.env.RATE_LIMIT_WINDOW_MS ?? 15 * 60 * 1000),
   rateLimitMax: Number(process.env.RATE_LIMIT_MAX ?? 300),
   cloudinary: {

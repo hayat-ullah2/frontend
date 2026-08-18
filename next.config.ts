@@ -19,6 +19,33 @@ const nextConfig: NextConfig = {
     // wildcard with an explicit list of the hosts you actually use.
     remotePatterns: [{ protocol: "https", hostname: "**" }],
   },
+  // Permanent (308) redirects for retired/consolidated URLs. (Tasks 1b, 5b, 11)
+  async redirects() {
+    return [
+      // Retired video listicles → the pillar (Task 5b / 1b).
+      {
+        source: "/blog/best-ai-tools-for-a-video-generator",
+        destination: "/blog/best-ai-tools-for-text-to-video-generators",
+        permanent: true,
+      },
+      {
+        source: "/blog/best-ai-video-generators-for-creators-in-2026",
+        destination: "/blog/best-ai-tools-for-text-to-video-generators",
+        permanent: true,
+      },
+      // Consolidated categories → AI Productivity Tools (Task 11a/b).
+      {
+        source: "/category/ai-for-business",
+        destination: "/category/ai-productivity-tools",
+        permanent: true,
+      },
+      {
+        source: "/category/guides-and-tutorials",
+        destination: "/category/ai-productivity-tools",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -15,6 +15,10 @@ const COOKIE_BASE = {
   secure: env.cookieSameSite === "none" ? true : isProd,
   sameSite: env.cookieSameSite,
   path: "/",
+  // When set (e.g. ".nexversal.com"), the cookie is shared across the frontend
+  // and API subdomains so server-rendered admin pages can read it. Undefined =
+  // host-only cookie (correct for localhost).
+  ...(env.cookieDomain ? { domain: env.cookieDomain } : {}),
 };
 
 function cookieOptions() {

@@ -21,14 +21,13 @@ export async function generateMetadata(
   const q = first(sp.q);
   const tag = first(sp.tag);
 
-  // Canonical mirrors the request's meaningful query params so page 2+ is a
-  // real crawlable URL that points to itself (avoids "canonical to page 1"
-  // pitfall).
-  const canonicalParams = new URLSearchParams();
-  if (page > 1) canonicalParams.set("page", String(page));
-  if (q) canonicalParams.set("q", q);
-  if (tag) canonicalParams.set("tag", tag);
-  const canonicalPath = `/blog${canonicalParams.size ? `?${canonicalParams}` : ""}`;
+  // Task 6 — any parameterized /blog (filters, search, sort, pagination) is
+  // noindex,follow and canonicalizes to the clean /blog. Plain /blog stays
+  // indexable. This kills thin/duplicate filtered pages from the index while
+  // still letting Google follow the links on them.
+  const sort = first(sp.sort);
+  const hasParams = Boolean(q || tag || sort || page > 1);
+  const canonicalPath = "/blog";
 
   const title =
     q ? `Search: “${q}”` : tag ? `#${tag}` : page > 1 ? `All articles — page ${page}` : "All articles";
@@ -40,6 +39,7 @@ export async function generateMetadata(
   return {
     title,
     description,
+    robots: hasParams ? { index: false, follow: true } : undefined,
     alternates: { canonical: canonicalPath },
     openGraph: {
       title,

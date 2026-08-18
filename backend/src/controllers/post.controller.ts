@@ -145,6 +145,15 @@ export async function getPost(req: Request, res: Response) {
     );
   if (!post) throw ApiError.notFound("Post not found");
 
+  // Only published posts are public. Drafts/scheduled/archived are visible only
+  // to authenticated staff (e.g. the admin editor) — so unpublished demo posts
+  // return 404 to visitors and drop out of Google. (Task 1a)
+  const role = req.user?.role;
+  const isStaff = role === "admin" || role === "editor" || role === "writer";
+  if (post.status !== "published" && !isStaff) {
+    throw ApiError.notFound("Post not found");
+  }
+
   // NB: views are no longer incremented here. The single-post page is rendered
   // statically (ISR), so a server GET happens only on revalidation — not per
   // visitor. Per-visit view counting lives in `registerView` below, which the
