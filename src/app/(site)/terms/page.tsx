@@ -25,7 +25,7 @@ export default function TermsPage() {
       <p>Some features require an account. You are responsible for keeping your credentials secure and for activity under your account. You must provide accurate information and be at least 16 years old. We may suspend or close accounts that violate these terms.</p>
 
       <h2>3. User content</h2>
-      <p>You are responsible for anything you post (for example, comments). Don&apos;t post content that is unlawful, hateful, infringing, spammy or misleading. By posting, you grant us a non-exclusive, worldwide, royalty-free licence to display and distribute that content on the site. We may remove content or moderate comments at our discretion.</p>
+      <p>You are responsible for anything you post (for example, comments). Don&apos;t post content that is unlawful, hateful, infringing, spammy or misleading. By posting, you grant us a non-exclusive, worldwide, royalty-free license to display and distribute that content on the site. We may remove content or moderate comments at our discretion.</p>
 
       <h2>4. Intellectual property</h2>
       <p>The articles, design, logos and code on {SITE_NAME} are owned by us or our licensors and are protected by intellectual-property laws. You may not copy, republish or create derivative works from our content without permission, except for normal quoting with attribution and a link.</p>

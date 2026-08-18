@@ -13,7 +13,7 @@ import {
   Users,
 } from "@/components/Icon";
 import { apiPublicSafe } from "@/lib/apiServer";
-import type { ApiCategory, ApiPost, ApiTag } from "@/lib/models";
+import type { ApiCategory, ApiPost } from "@/lib/models";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
 
@@ -53,10 +53,9 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [posts, categories, tags] = await Promise.all([
+  const [posts, categories] = await Promise.all([
     apiPublicSafe<ApiPost[]>("/posts?limit=20", []),
     apiPublicSafe<ApiCategory[]>("/categories", []),
-    apiPublicSafe<ApiTag[]>("/tags", []),
   ]);
 
   // Featured authors = unique authors of recently published posts.
@@ -79,8 +78,10 @@ export default async function HomePage() {
   const featured = posts.find((p) => p.featured) ?? posts[0];
   const trending = posts.filter((p) => p.trending).slice(0, 4);
   const latest = posts.slice(0, 9);
-  const popularCategories = categories.slice(0, 8);
-  const popularTags = tags.slice(0, 12);
+  // Hide categories with fewer than 2 published posts (Task 4f).
+  const popularCategories = categories
+    .filter((c) => (c.postCount ?? 0) >= 2)
+    .slice(0, 8);
 
   // Empty-state if there's literally nothing.
   if (!featured) {
@@ -232,18 +233,6 @@ export default async function HomePage() {
                 ))}
               </div>
             </div>
-            {popularTags.length > 0 && (
-              <div className="card p-5">
-                <h3 className="font-semibold mb-4">Popular tags</h3>
-                <div className="flex flex-wrap gap-2">
-                  {popularTags.map((t) => (
-                    <Link key={t._id} href={`/blog?tag=${t.slug}`} className="chip hover:text-foreground">
-                      #{t.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
           </aside>
         </div>
       </section>
@@ -274,7 +263,7 @@ export default async function HomePage() {
                     {c.description}
                   </p>
                   <p className="mt-3 text-xs text-foreground-subtle">
-                    {c.postCount} articles
+                    {c.postCount} {c.postCount === 1 ? "article" : "articles"}
                   </p>
                 </div>
               </Link>

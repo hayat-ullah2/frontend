@@ -6,6 +6,9 @@ const categorySchema = new Schema(
     name: { type: String, required: true, unique: true, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true, index: true },
     description: { type: String, maxlength: 500 },
+    // Optional rich-text (HTML) intro rendered above the post list — 150–300
+    // words for topical context + SEO. (Task 11d)
+    intro: { type: String, maxlength: 6000 },
     color: { type: String, default: "from-violet-500 to-blue-500" },
     icon: { type: String },
     postCount: { type: Number, default: 0 },

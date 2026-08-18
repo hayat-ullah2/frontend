@@ -13,7 +13,7 @@ const publisher = {
   url: SITE_URL,
   logo: {
     "@type": "ImageObject",
-    url: absoluteUrl("/favicon.ico"),
+    url: absoluteUrl("/logo.png"),
   },
 };
 
@@ -23,7 +23,7 @@ export function organizationSchema() {
     "@type": "Organization",
     name: SITE_NAME,
     url: SITE_URL,
-    logo: absoluteUrl("/favicon.ico"),
+    logo: absoluteUrl("/logo.png"),
     sameAs: [
       SITE_SOCIAL.twitter,
       SITE_SOCIAL.github,
@@ -55,6 +55,11 @@ export function websiteSchema() {
 export function blogPostingSchema(post: ApiPost) {
   const url = absoluteUrl(`/blog/${post.slug}`);
   const authorUrl = absoluteUrl(`/author/${post.author._id}`);
+  // Task 8d — surface schema gaps in dev so they get fixed before publish.
+  if (process.env.NODE_ENV !== "production") {
+    if (!post.publishedAt) console.warn(`[schema] ${post.slug} missing datePublished`);
+    if (!post.targetLanguage) console.warn(`[schema] ${post.slug} missing inLanguage`);
+  }
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",

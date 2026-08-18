@@ -36,9 +36,9 @@ export async function generateMetadata(
       title,
       description,
       alternates: { canonical: canonicalPath },
-      // Keep empty category pages out of the index (thin content) but let
-      // crawlers follow links out of them.
-      robots: (cat.postCount ?? 0) === 0 ? { index: false, follow: true } : undefined,
+      // Keep thin category pages (< 3 published posts) out of the index but let
+      // crawlers follow links out of them. (Task 11d)
+      robots: (cat.postCount ?? 0) < 3 ? { index: false, follow: true } : undefined,
       openGraph: {
         title,
         description,
@@ -125,10 +125,17 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
             {category.description}
           </p>
           <div className="mt-6 flex items-center gap-3 text-sm text-foreground-subtle">
-            <span className="chip">{posts.length} articles</span>
+            <span className="chip">{posts.length} {posts.length === 1 ? "article" : "articles"}</span>
           </div>
         </div>
       </section>
+
+      {category.intro && (
+        <div
+          className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 mt-10 prose-article"
+          dangerouslySetInnerHTML={{ __html: category.intro }}
+        />
+      )}
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2 overflow-x-auto pb-1">

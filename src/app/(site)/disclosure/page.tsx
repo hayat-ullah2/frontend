@@ -12,7 +12,7 @@ export default function DisclosurePage() {
     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16 prose-article">
       <h1 className="text-4xl font-bold tracking-tight">Affiliate disclosure</h1>
       <p className="mt-4 text-foreground-muted">
-        Last updated: this page reflects our current practices and is kept up to date.
+        Last updated: August 18, 2026.
       </p>
 
       <div className="mt-8 space-y-6 text-foreground-muted leading-relaxed">

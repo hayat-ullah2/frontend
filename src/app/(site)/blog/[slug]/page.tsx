@@ -11,6 +11,7 @@ import Newsletter from "@/components/site/Newsletter";
 import PostActions from "@/components/site/PostActions";
 import ReadingProgress from "@/components/site/ReadingProgress";
 import AdSlot from "@/components/site/monetize/AdSlot";
+import AffiliateDisclosure from "@/components/site/monetize/AffiliateDisclosure";
 import RecommendedTools from "@/components/site/monetize/RecommendedTools";
 import ShareButton from "@/components/site/ShareButton";
 import { Clock, Eye, Linkedin, Twitter } from "@/components/Icon";
@@ -227,12 +228,23 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
             </aside>
 
             <div className="lg:col-span-8 min-w-0">
-              {post.content && (
-                <div
-                  className="prose-article"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
-                />
-              )}
+              {post.content &&
+                (() => {
+                  // Task 12a — auto-insert the affiliate disclosure just above
+                  // the first H2 on any post that links out through /go/.
+                  const html = post.content;
+                  const h2 = html.search(/<h2\b/i);
+                  if (html.includes("/go/") && h2 > -1) {
+                    return (
+                      <>
+                        <div className="prose-article" dangerouslySetInnerHTML={{ __html: html.slice(0, h2) }} />
+                        <AffiliateDisclosure className="my-6" compact />
+                        <div className="prose-article" dangerouslySetInnerHTML={{ __html: html.slice(h2) }} />
+                      </>
+                    );
+                  }
+                  return <div className="prose-article" dangerouslySetInnerHTML={{ __html: html }} />;
+                })()}
 
               {post.tags.length > 0 && (
                 <div className="mt-10 flex flex-wrap items-center gap-2">

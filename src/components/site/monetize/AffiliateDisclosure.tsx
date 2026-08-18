@@ -19,13 +19,11 @@ export default function AffiliateDisclosure({
     >
       <span className="font-medium text-foreground-muted">Disclosure:</span>{" "}
       {compact
-        ? "Some links below are affiliate links — we may earn a commission at no extra cost to you."
+        ? "Nexversal is reader-supported. If you buy through links on this page, we may earn a commission. "
         : "This article contains affiliate links. If you buy through them we may earn a commission, at no additional cost to you. We only recommend tools we believe are genuinely useful. "}
-      {!compact && (
-        <Link href="/disclosure" className="underline underline-offset-2 hover:text-foreground">
-          Learn more
-        </Link>
-      )}
+      <Link href="/disclosure" className="underline underline-offset-2 hover:text-foreground">
+        Learn more
+      </Link>
     </div>
   );
 }

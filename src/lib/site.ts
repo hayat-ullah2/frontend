@@ -12,6 +12,10 @@ export const SITE_LOCALE = "en_US";
 // Author of the site (used in RSS + JSON-LD publisher).
 export const SITE_AUTHOR = "Nexversal Editorial";
 
+// Below this many views/likes, we hide the count in the UI rather than show a
+// tiny (or zero) number that reads as low-traffic. (Task 2d)
+export const VIEWS_DISPLAY_THRESHOLD = 1000;
+
 // Social profiles — used in Organization schema `sameAs`.
 export const SITE_SOCIAL = {
   twitter: "https://twitter.com/nexversal",

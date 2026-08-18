@@ -24,6 +24,7 @@ export type ApiCategory = {
   name: string;
   slug: string;
   description?: string;
+  intro?: string;
   color: string;
   postCount: number;
 };

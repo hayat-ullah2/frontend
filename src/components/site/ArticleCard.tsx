@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ApiPost } from "@/lib/models";
+import { VIEWS_DISPLAY_THRESHOLD } from "@/lib/site";
 import { Clock, Eye } from "../Icon";
 
 type Variant = "default" | "compact" | "horizontal";
@@ -42,12 +43,16 @@ export default function ArticleCard({
             </h3>
           </div>
           <div className="flex items-center gap-3 text-[11px] text-foreground-subtle">
-            <span className="flex items-center gap-1">
-              <Clock size={12} /> {post.readingTime}m
-            </span>
-            <span className="flex items-center gap-1">
-              <Eye size={12} /> {formatNum(post.views)}
-            </span>
+            {post.readingTime >= 1 && (
+              <span className="flex items-center gap-1">
+                <Clock size={12} /> {post.readingTime}m
+              </span>
+            )}
+            {post.views >= VIEWS_DISPLAY_THRESHOLD && (
+              <span className="flex items-center gap-1">
+                <Eye size={12} /> {formatNum(post.views)}
+              </span>
+            )}
           </div>
         </div>
       </Link>
@@ -76,9 +81,11 @@ export default function ArticleCard({
           </h3>
           <div className="mt-3 flex items-center justify-between text-xs text-foreground-subtle">
             <span>{author?.name}</span>
-            <span className="flex items-center gap-1">
-              <Clock size={12} /> {post.readingTime}m
-            </span>
+            {post.readingTime >= 1 && (
+              <span className="flex items-center gap-1">
+                <Clock size={12} /> {post.readingTime}m
+              </span>
+            )}
           </div>
         </div>
       </Link>
@@ -131,12 +138,16 @@ export default function ArticleCard({
             </div>
           </div>
           <div className="flex items-center gap-3 text-xs text-foreground-subtle">
-            <span className="flex items-center gap-1">
-              <Clock size={12} /> {post.readingTime}m
-            </span>
-            <span className="flex items-center gap-1">
-              <Eye size={12} /> {formatNum(post.views)}
-            </span>
+            {post.readingTime >= 1 && (
+              <span className="flex items-center gap-1">
+                <Clock size={12} /> {post.readingTime}m
+              </span>
+            )}
+            {post.views >= VIEWS_DISPLAY_THRESHOLD && (
+              <span className="flex items-center gap-1">
+                <Eye size={12} /> {formatNum(post.views)}
+              </span>
+            )}
           </div>
         </div>
       </div>
