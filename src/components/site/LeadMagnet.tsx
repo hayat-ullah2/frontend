@@ -101,16 +101,20 @@ export default function LeadMagnet({
                 className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none placeholder:text-foreground-subtle focus:border-violet-500/40"
               />
             )}
-            <div className="flex flex-col sm:flex-row gap-2.5">
+            <div className={`flex gap-2.5 ${compact ? "flex-col" : "flex-col sm:flex-row"}`}>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="flex-1 bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none placeholder:text-foreground-subtle focus:border-violet-500/40"
+                className="flex-1 min-w-0 bg-background border border-white/10 rounded-xl px-4 py-3 text-sm outline-none placeholder:text-foreground-subtle focus:border-violet-500/40"
               />
-              <button type="submit" disabled={saving} className="btn-primary text-sm disabled:opacity-60">
+              <button
+                type="submit"
+                disabled={saving}
+                className={`btn-primary text-sm disabled:opacity-60 ${compact ? "w-full" : ""}`}
+              >
                 {saving ? "Sending…" : buttonLabel}
               </button>
             </div>
