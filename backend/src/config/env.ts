@@ -8,6 +8,37 @@ function required(name: string, fallback?: string): string {
   return v;
 }
 
+/**
+ * Work out the shared cookie domain so the auth cookie is readable by BOTH the
+ * frontend (nexversal.com) and the API (api.nexversal.com). Without this the
+ * `token` cookie is host-only to the API subdomain, so the Vercel/Next server
+ * rendering an admin page can't read it and can't forward it to the API — which
+ * makes server-rendered draft fetches (e.g. the post editor) 404 for staff.
+ *
+ * Prefer an explicit COOKIE_DOMAIN. Otherwise, in production only, derive it
+ * from FRONTEND_URL's apex (`https://nexversal.com` → `.nexversal.com`). Returns
+ * undefined for localhost/IP hosts so local dev keeps a host-only cookie.
+ */
+function resolveCookieDomain(): string | undefined {
+  if (process.env.COOKIE_DOMAIN) return process.env.COOKIE_DOMAIN;
+  if ((process.env.NODE_ENV ?? "development") !== "production") return undefined;
+
+  const source = process.env.FRONTEND_URL ?? process.env.CLIENT_ORIGIN;
+  if (!source) return undefined;
+  let host: string;
+  try {
+    host = new URL(source.split(",")[0].trim()).hostname;
+  } catch {
+    return undefined;
+  }
+  // Skip localhost and bare IPs — a Domain attribute is invalid/pointless there.
+  if (host === "localhost" || /^[\d.]+$/.test(host) || host.includes(":")) return undefined;
+  host = host.replace(/^www\./, "");
+  // Need at least an apex like `example.com` to safely scope a parent domain.
+  if (host.split(".").length < 2) return undefined;
+  return `.${host}`;
+}
+
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? "development",
   port: Number(process.env.PORT ?? 5000),
@@ -30,7 +61,7 @@ export const env = {
   // so the auth cookie is readable by BOTH — required for the Vercel server to
   // forward it to the API on admin/server-rendered pages. Leave unset for
   // localhost (host-only cookie).
-  cookieDomain: process.env.COOKIE_DOMAIN || undefined,
+  cookieDomain: resolveCookieDomain(),
   rateLimitWindowMs: Number(process.env.RATE_LIMIT_WINDOW_MS ?? 15 * 60 * 1000),
   rateLimitMax: Number(process.env.RATE_LIMIT_MAX ?? 300),
   cloudinary: {
