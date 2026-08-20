@@ -15,13 +15,15 @@ function required(name: string, fallback?: string): string {
  * rendering an admin page can't read it and can't forward it to the API — which
  * makes server-rendered draft fetches (e.g. the post editor) 404 for staff.
  *
- * Prefer an explicit COOKIE_DOMAIN. Otherwise, in production only, derive it
- * from FRONTEND_URL's apex (`https://nexversal.com` → `.nexversal.com`). Returns
- * undefined for localhost/IP hosts so local dev keeps a host-only cookie.
+ * Prefer an explicit COOKIE_DOMAIN. Otherwise derive it from FRONTEND_URL (or
+ * CLIENT_ORIGIN) — e.g. `https://nexversal.com` → `.nexversal.com`. We key off
+ * the hostname, NOT NODE_ENV: hosts like localhost/IP return undefined (so local
+ * dev keeps a host-only cookie), while a real apex domain gets a shared cookie.
+ * This is deliberate — some hosts (e.g. Railway) don't set NODE_ENV=production,
+ * which previously made this bail out and left the cookie host-only.
  */
 function resolveCookieDomain(): string | undefined {
   if (process.env.COOKIE_DOMAIN) return process.env.COOKIE_DOMAIN;
-  if ((process.env.NODE_ENV ?? "development") !== "production") return undefined;
 
   const source = process.env.FRONTEND_URL ?? process.env.CLIENT_ORIGIN;
   if (!source) return undefined;
