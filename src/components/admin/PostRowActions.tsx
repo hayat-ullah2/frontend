@@ -87,6 +87,7 @@ export default function PostRowActions({
         href={`/blog/${slug}`}
         target="_blank"
         rel="noreferrer"
+        prefetch={false}
         className="w-8 h-8 rounded-lg border border-white/5 hover:bg-white/5 grid place-items-center text-foreground-muted"
         aria-label="Preview"
       >

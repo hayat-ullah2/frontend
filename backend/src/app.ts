@@ -29,6 +29,27 @@ export function createApp() {
   app.use(compression());
   app.use(morgan(isProd ? "combined" : "dev"));
 
+  // ── SEO: this API subdomain must never be indexed ─────────────────────────
+  // Googlebot discovers api.nexversal.com from the frontend JS bundle (the
+  // NEXT_PUBLIC_API_BASE_URL value is compiled into it) and crawls the bare
+  // domain. Previously `/` fell through to notFoundHandler → 404, which
+  // surfaced in Search Console as "Not found (404)". Tag every response
+  // noindex so nothing here can enter the search index, steer crawlers away
+  // from the JSON endpoints via robots.txt, and answer the root with a 200 so
+  // the 404 report clears.
+  app.use((_req, res, next) => {
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
+    next();
+  });
+
+  app.get("/robots.txt", (_req, res) => {
+    res.type("text/plain").send("User-agent: *\nDisallow: /api/\n");
+  });
+
+  app.get("/", (_req, res) => {
+    res.json({ success: true, service: "nexblog-api", docs: "/api/health" });
+  });
+
   // Strict limiter for auth endpoints: prevents brute-force on login/signup.
   // 60 attempts per 15 min from a single IP is plenty for real users while
   // still stopping password spraying.
