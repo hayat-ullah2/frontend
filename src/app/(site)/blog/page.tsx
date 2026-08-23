@@ -2,12 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import ArticleCard from "@/components/site/ArticleCard";
 import FilterBar from "@/components/FilterBar";
-import { ArrowLeft, ArrowRight } from "@/components/Icon";
 import { apiPublicSafe } from "@/lib/apiServer";
 import type { ApiCategory, ApiPost, ApiTag } from "@/lib/models";
 import { SITE_NAME, absoluteUrl } from "@/lib/site";
-
-const PAGE_SIZE = 12;
 
 // P4.14 — Regenerate every 5 minutes.
 // 60s fallback; the /api/revalidate webhook refreshes this instantly on publish.
@@ -17,7 +14,6 @@ export async function generateMetadata(
   props: PageProps<"/blog">,
 ): Promise<Metadata> {
   const sp = await props.searchParams;
-  const page = Math.max(1, Number(first(sp.page) ?? 1));
   const q = first(sp.q);
   const tag = first(sp.tag);
 
@@ -26,11 +22,11 @@ export async function generateMetadata(
   // indexable. This kills thin/duplicate filtered pages from the index while
   // still letting Google follow the links on them.
   const sort = first(sp.sort);
-  const hasParams = Boolean(q || tag || sort || page > 1);
+  const hasParams = Boolean(q || tag || sort || first(sp.page));
   const canonicalPath = "/blog";
 
   const title =
-    q ? `Search: “${q}”` : tag ? `#${tag}` : page > 1 ? `All articles — page ${page}` : "All articles";
+    q ? `Search: “${q}”` : tag ? `#${tag}` : "All articles";
   const description =
     q || tag
       ? `Articles filtered by ${q ? `"${q}"` : `#${tag}`} on ${SITE_NAME}.`
@@ -70,7 +66,6 @@ export default async function BlogListingPage(props: PageProps<"/blog">) {
   const q = first(sp.q);
   const tag = first(sp.tag);
   const sort = first(sp.sort) ?? "latest";
-  const page = Math.max(1, Number(first(sp.page) ?? 1));
 
   const params = new URLSearchParams({ limit: "1000" });
   if (q) params.set("q", q);
@@ -83,23 +78,6 @@ export default async function BlogListingPage(props: PageProps<"/blog">) {
   ]);
 
   const sorted = sortPosts(posts, sort);
-  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
-  const clampedPage = Math.min(page, totalPages);
-  const pageStart = (clampedPage - 1) * PAGE_SIZE;
-  const pageItems = sorted.slice(pageStart, pageStart + PAGE_SIZE);
-
-  // Build a URL for a given page, preserving current filters.
-  function pageHref(target: number) {
-    const p = new URLSearchParams();
-    if (q) p.set("q", q);
-    if (tag) p.set("tag", tag);
-    if (sort && sort !== "latest") p.set("sort", sort);
-    if (target > 1) p.set("page", String(target));
-    const qs = p.toString();
-    return `/blog${qs ? `?${qs}` : ""}`;
-  }
-
-  const pageNumbers = buildPageNumbers(clampedPage, totalPages);
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
@@ -176,7 +154,7 @@ export default async function BlogListingPage(props: PageProps<"/blog">) {
         </aside>
 
         <div className="lg:col-span-3">
-          {pageItems.length === 0 ? (
+          {sorted.length === 0 ? (
             <div className="card p-12 text-center text-foreground-subtle">
               No posts match your filters.
               {(q || tag) && (
@@ -189,63 +167,10 @@ export default async function BlogListingPage(props: PageProps<"/blog">) {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 gap-6">
-              {pageItems.map((p) => (
+              {sorted.map((p) => (
                 <ArticleCard key={p._id} post={p} />
               ))}
             </div>
-          )}
-
-          {totalPages > 1 && (
-            <nav
-              aria-label="Pagination"
-              className="mt-12 flex items-center justify-between gap-4 flex-wrap"
-            >
-              {clampedPage > 1 ? (
-                <Link href={pageHref(clampedPage - 1)} className="btn-ghost text-sm">
-                  <ArrowLeft size={14} /> Previous
-                </Link>
-              ) : (
-                <span className="btn-ghost text-sm opacity-40 cursor-not-allowed">
-                  <ArrowLeft size={14} /> Previous
-                </span>
-              )}
-
-              <div className="flex items-center gap-1">
-                {pageNumbers.map((n, i) =>
-                  n === "…" ? (
-                    <span
-                      key={`gap-${i}`}
-                      className="px-2 text-foreground-subtle text-sm"
-                    >
-                      …
-                    </span>
-                  ) : (
-                    <Link
-                      key={n}
-                      href={pageHref(n)}
-                      aria-current={n === clampedPage ? "page" : undefined}
-                      className={`w-10 h-10 rounded-lg text-sm grid place-items-center transition ${
-                        n === clampedPage
-                          ? "bg-gradient-accent text-white font-semibold"
-                          : "text-foreground-muted hover:bg-white/5"
-                      }`}
-                    >
-                      {n}
-                    </Link>
-                  ),
-                )}
-              </div>
-
-              {clampedPage < totalPages ? (
-                <Link href={pageHref(clampedPage + 1)} className="btn-ghost text-sm">
-                  Next <ArrowRight size={14} />
-                </Link>
-              ) : (
-                <span className="btn-ghost text-sm opacity-40 cursor-not-allowed">
-                  Next <ArrowRight size={14} />
-                </span>
-              )}
-            </nav>
           )}
         </div>
       </div>
@@ -277,23 +202,6 @@ function sortPosts(posts: ApiPost[], sort: string): ApiPost[] {
           +new Date(a.publishedAt ?? a.createdAt),
       );
   }
-}
-
-/** Windowed page-number list with ellipses (e.g. 1 … 4 5 6 … 12). */
-function buildPageNumbers(current: number, total: number): (number | "…")[] {
-  const nums: (number | "…")[] = [];
-  const push = (n: number | "…") => {
-    if (nums[nums.length - 1] !== n) nums.push(n);
-  };
-  const window = 1;
-  push(1);
-  if (current - window > 2) push("…");
-  for (let n = Math.max(2, current - window); n <= Math.min(total - 1, current + window); n++) {
-    push(n);
-  }
-  if (current + window < total - 1) push("…");
-  if (total > 1) push(total);
-  return nums;
 }
 
 function FilterPill({
