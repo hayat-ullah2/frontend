@@ -113,7 +113,7 @@ export default async function BlogListingPage(props: PageProps<"/blog">) {
               label: "Sort",
               options: [
                 { value: "latest", label: "Latest" },
-                { value: "views", label: "Most viewed" },
+                { value: "views", label: "Most read" },
                 { value: "likes", label: "Most liked" },
                 { value: "oldest", label: "Oldest first" },
               ],

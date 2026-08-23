@@ -7,7 +7,6 @@ import Newsletter from "@/components/site/Newsletter";
 import {
   ArrowRight,
   Clock,
-  Eye,
   Sparkles,
   TrendUp,
   Users,
@@ -175,9 +174,6 @@ export default async function HomePage() {
                         <Clock size={14} /> {featured.readingTime} min read
                       </span>
                     )}
-                    <span className="flex items-center gap-1 text-foreground-subtle">
-                      <Eye size={14} /> {formatNum(featured.views)} views
-                    </span>
                   </div>
                 </div>
               </Link>
@@ -326,9 +322,4 @@ function SectionHeader({
       )}
     </div>
   );
-}
-
-function formatNum(n: number) {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
-  return n.toString();
 }

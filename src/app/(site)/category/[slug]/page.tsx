@@ -152,7 +152,7 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
         <div className="relative">
           <select className="appearance-none bg-background-elev border border-white/5 rounded-xl px-4 py-2 text-sm pr-10 outline-none">
             <option>Latest</option>
-            <option>Most viewed</option>
+            <option>Most read</option>
             <option>Most liked</option>
           </select>
           <Filter

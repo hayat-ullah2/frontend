@@ -2,7 +2,7 @@ import Link from "next/link";
 import { apiPublicSafe } from "@/lib/apiServer";
 import type { ApiCategory } from "@/lib/models";
 import CookieSettingsButton from "./CookieSettingsButton";
-import { Github, Linkedin, Logo, Twitter } from "../Icon";
+import { Github, Linkedin, Logo } from "../Icon";
 
 export default async function Footer() {
   // Real categories from the DB — only those with published posts, so the
@@ -55,13 +55,22 @@ export default async function Footer() {
               productivity. Tested, not just listed.
             </p>
             <div className="mt-5 flex items-center gap-2">
-              <a className="btn-ghost p-2 rounded-full" href="#" aria-label="Twitter">
-                <Twitter size={16} />
-              </a>
-              <a className="btn-ghost p-2 rounded-full" href="#" aria-label="GitHub">
+              <a
+                className="btn-ghost p-2 rounded-full"
+                href="https://github.com/hayat-ullah2"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+              >
                 <Github size={16} />
               </a>
-              <a className="btn-ghost p-2 rounded-full" href="#" aria-label="LinkedIn">
+              <a
+                className="btn-ghost p-2 rounded-full"
+                href="https://www.linkedin.com/in/hayat-ullah-dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+              >
                 <Linkedin size={16} />
               </a>
             </div>

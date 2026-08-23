@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ArticleCard from "@/components/site/ArticleCard";
 import {
-  Eye,
   FileText,
   Github,
   Globe,
@@ -60,7 +59,6 @@ export default async function AuthorPage(props: PageProps<"/author/[slug]">) {
     [],
   );
 
-  const totalViews = authorPosts.reduce((s, p) => s + p.views, 0);
   const totalLikes = authorPosts.reduce((s, p) => s + p.likes, 0);
 
   return (
@@ -132,9 +130,8 @@ export default async function AuthorPage(props: PageProps<"/author/[slug]">) {
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-4 gap-4 mt-6">
+        <div className="grid sm:grid-cols-3 gap-4 mt-6">
           <StatCard label="Published" value={authorPosts.length.toString()} icon={<FileText size={16} />} />
-          <StatCard label="Total views" value={formatNum(totalViews)} icon={<Eye size={16} />} />
           <StatCard label="Total likes" value={totalLikes.toString()} icon={<Heart size={16} />} />
           <StatCard label="Member since" value={new Date(author.createdAt).getFullYear().toString()} icon={<Users size={16} />} />
         </div>
@@ -184,9 +181,4 @@ function StatCard({
       <p className="mt-2 text-2xl font-semibold">{value}</p>
     </div>
   );
-}
-
-function formatNum(n: number) {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
-  return n.toString();
 }

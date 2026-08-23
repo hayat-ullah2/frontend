@@ -62,14 +62,14 @@ export default function CommentForm({ slug }: { slug: string }) {
           {success}
         </div>
       )}
-      <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/5">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mt-3 pt-3 border-t border-white/5">
         <p className="text-xs text-foreground-subtle">
           Be respectful. Comments are reviewed before being published.
         </p>
         <button
           type="submit"
           disabled={saving}
-          className="btn-primary text-sm disabled:opacity-60"
+          className="btn-primary text-sm disabled:opacity-60 w-full sm:w-auto"
         >
           {saving ? "Posting…" : "Post comment"}
         </button>

@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ApiPost } from "@/lib/models";
-import { VIEWS_DISPLAY_THRESHOLD } from "@/lib/site";
-import { Clock, Eye } from "../Icon";
+import { Clock } from "../Icon";
 
 type Variant = "default" | "compact" | "horizontal";
 
@@ -45,11 +44,6 @@ export default function ArticleCard({
             {post.readingTime >= 1 && (
               <span className="flex items-center gap-1">
                 <Clock size={12} /> {post.readingTime}m
-              </span>
-            )}
-            {post.views >= VIEWS_DISPLAY_THRESHOLD && (
-              <span className="flex items-center gap-1">
-                <Eye size={12} /> {formatNum(post.views)}
               </span>
             )}
           </div>
@@ -120,19 +114,9 @@ export default function ArticleCard({
                 <Clock size={12} /> {post.readingTime}m
               </span>
             )}
-            {post.views >= VIEWS_DISPLAY_THRESHOLD && (
-              <span className="flex items-center gap-1">
-                <Eye size={12} /> {formatNum(post.views)}
-              </span>
-            )}
           </div>
         </div>
       </div>
     </Link>
   );
-}
-
-function formatNum(n: number) {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
-  return n.toString();
 }

@@ -14,12 +14,12 @@ import AdSlot from "@/components/site/monetize/AdSlot";
 import AffiliateDisclosure from "@/components/site/monetize/AffiliateDisclosure";
 import RecommendedTools from "@/components/site/monetize/RecommendedTools";
 import ShareButton from "@/components/site/ShareButton";
-import { Clock, Eye, Linkedin, Twitter } from "@/components/Icon";
+import { Clock, Linkedin, Twitter } from "@/components/Icon";
 import { apiPublic, apiPublicSafe } from "@/lib/apiServer";
 import { ApiError } from "@/lib/api";
 import type { ApiComment, ApiPost } from "@/lib/models";
 import { blogPostingSchema, breadcrumbSchema, faqSchema } from "@/lib/schema";
-import { SITE_NAME, VIEWS_DISPLAY_THRESHOLD, absoluteUrl } from "@/lib/site";
+import { SITE_NAME, absoluteUrl } from "@/lib/site";
 
 // P4.14 — Regenerate an individual post every 5 minutes (also revalidated on
 // demand via /api/revalidate when the admin edits/publishes).
@@ -172,11 +172,6 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
               {post.readingTime >= 1 && (
                 <span className="flex items-center gap-1 text-foreground-subtle">
                   <Clock size={14} /> {post.readingTime} min read
-                </span>
-              )}
-              {post.views >= VIEWS_DISPLAY_THRESHOLD && (
-                <span className="flex items-center gap-1 text-foreground-subtle">
-                  <Eye size={14} /> {formatNum(post.views)} views
                 </span>
               )}
             </div>
@@ -337,9 +332,4 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
       </article>
     </>
   );
-}
-
-function formatNum(n: number) {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
-  return n.toString();
 }
