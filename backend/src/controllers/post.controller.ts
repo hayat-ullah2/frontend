@@ -78,9 +78,11 @@ function analysisFields(a: SeoAnalysis) {
   };
 }
 
-async function revalidateForPost(slug: string, categorySlug?: string) {
+async function revalidateForPost(slug: string, ...categorySlugs: (string | undefined)[]) {
   const paths = ["/", "/blog", `/blog/${slug}`];
-  if (categorySlug) paths.push(`/category/${categorySlug}`);
+  for (const categorySlug of new Set(categorySlugs.filter(Boolean))) {
+    paths.push(`/category/${categorySlug}`);
+  }
   await revalidatePaths(paths);
 }
 
@@ -293,6 +295,9 @@ export async function createPost(req: Request, res: Response) {
 export async function updatePost(req: Request, res: Response) {
   const existing = await Post.findOne({ slug: req.params.slug });
   if (!existing) throw ApiError.notFound("Post not found");
+  const previousCat = existing.category
+    ? await Category.findById(existing.category).select("slug")
+    : null;
 
   // If the cover image is being replaced (and we have a publicId), clean up the old one.
   if (
@@ -326,7 +331,7 @@ export async function updatePost(req: Request, res: Response) {
     const cat = post.category
       ? await Category.findById(post.category).select("slug")
       : null;
-    await revalidateForPost(post.slug, cat?.slug);
+    await revalidateForPost(post.slug, previousCat?.slug, cat?.slug);
   }
   res.json({ success: true, data: post });
 }

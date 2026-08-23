@@ -78,6 +78,10 @@ export default async function BlogListingPage(props: PageProps<"/blog">) {
   ]);
 
   const sorted = sortPosts(posts, sort);
+  const totalPublishedPosts = categories.reduce(
+    (sum, category) => sum + (category.postCount ?? 0),
+    0,
+  );
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
@@ -123,7 +127,12 @@ export default async function BlogListingPage(props: PageProps<"/blog">) {
           <div className="card p-5">
             <h3 className="font-semibold mb-4">Categories</h3>
             <div className="flex flex-col gap-1">
-              <FilterPill href="/blog" label="All" active={!q && !tag} />
+              <FilterPill
+                href="/blog"
+                label="All"
+                count={totalPublishedPosts}
+                active={!q && !tag}
+              />
               {categories.map((c) => (
                 <FilterPill
                   key={c._id}
