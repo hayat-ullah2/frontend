@@ -4,6 +4,7 @@ import "./globals.css";
 import AnalyticsTracker from "@/components/site/AnalyticsTracker";
 import CookieConsent from "@/components/site/CookieConsent";
 import GoogleAnalyticsConsent from "@/components/site/GoogleAnalyticsConsent";
+import GoogleTagManagerConsent from "@/components/site/GoogleTagManagerConsent";
 import AdsScript from "@/components/site/monetize/AdsScript";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
@@ -19,6 +20,8 @@ const geistMono = Geist_Mono({
 
 const gaId =
   process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_GA_ID : undefined;
+const gtmId =
+  process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_GTM_ID : undefined;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -87,6 +90,7 @@ export default function RootLayout({
         <CookieConsent />
         <AdsScript />
         {gaId ? <GoogleAnalyticsConsent gaId={gaId} /> : null}
+        {gtmId ? <GoogleTagManagerConsent gtmId={gtmId} /> : null}
       </body>
     </html>
   );
