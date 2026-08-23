@@ -43,7 +43,9 @@ async function request<T>(
     ...rest,
     // Auth requests must never be cached (they're per-user); public requests
     // are cached and revalidated on a schedule so pages can be prerendered.
-    ...(auth ? { cache: "no-store" } : { next: { revalidate } }),
+    ...(auth || revalidate <= 0
+      ? { cache: "no-store" }
+      : { next: { revalidate } }),
     headers: {
       ...(json !== undefined ? { "Content-Type": "application/json" } : {}),
       Accept: "application/json",

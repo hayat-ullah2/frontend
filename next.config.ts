@@ -33,17 +33,6 @@ const nextConfig: NextConfig = {
         destination: "/blog/best-ai-tools-for-text-to-video-generators",
         permanent: true,
       },
-      // Consolidated categories → AI Productivity Tools (Task 11a/b).
-      {
-        source: "/category/ai-for-business",
-        destination: "/category/ai-productivity-tools",
-        permanent: true,
-      },
-      {
-        source: "/category/guides-and-tutorials",
-        destination: "/category/ai-productivity-tools",
-        permanent: true,
-      },
     ];
   },
 };

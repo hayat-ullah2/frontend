@@ -24,7 +24,7 @@ export async function generateMetadata(
   const page = Math.max(1, Number(first(sp.page) ?? 1));
 
   try {
-    const cat = await apiPublic<ApiCategory>(`/categories/${slug}`);
+    const cat = await apiPublic<ApiCategory>(`/categories/${slug}`, {}, 0);
     const canonicalPath =
       page > 1 ? `/category/${slug}?page=${page}` : `/category/${slug}`;
     const title =
@@ -73,15 +73,15 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
 
   let category: ApiCategory;
   try {
-    category = await apiPublic<ApiCategory>(`/categories/${slug}`);
+    category = await apiPublic<ApiCategory>(`/categories/${slug}`, {}, 0);
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) notFound();
     throw err;
   }
 
   const [posts, allCategories] = await Promise.all([
-    apiPublicSafe<ApiPost[]>(`/posts?category=${category._id}&limit=1000`, []),
-    apiPublicSafe<ApiCategory[]>("/categories", []),
+    apiPublicSafe<ApiPost[]>(`/posts?category=${category._id}&limit=1000`, [], undefined, 0),
+    apiPublicSafe<ApiCategory[]>("/categories", [], undefined, 0),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
