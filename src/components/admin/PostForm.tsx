@@ -459,7 +459,10 @@ export default function PostForm({
             <Field
               label="Slug"
               value={slug}
-              onChange={setSlug}
+              // Sanitize on input so a slug can never contain URL-breaking
+              // characters (spaces, &, ?, #, …). Anything outside a-z/0-9/-
+              // collapses to a hyphen — matching how `autoSlug` is built.
+              onChange={(v) => setSlug(v.toLowerCase().replace(/[^a-z0-9-]+/g, "-"))}
               placeholder={autoSlug || "auto-generated-from-title"}
               hint={`URL: /blog/${slug || autoSlug || "your-slug"}`}
             />
