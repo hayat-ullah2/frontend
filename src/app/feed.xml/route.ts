@@ -2,9 +2,12 @@ import { apiPublicSafe } from "@/lib/apiServer";
 import type { ApiPost } from "@/lib/models";
 import { SITE_AUTHOR, SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
 
-// Cache the feed for 5 minutes to match the rest of the ISR strategy.
-export const revalidate = 300;
-export const dynamic = "force-static";
+// Always render the feed fresh. Previously `force-static` + a cached fetch
+// froze the feed at build time, so it kept serving an old set of 20 posts and
+// never picked up newer articles. The feed is crawler-only traffic, so a
+// dynamic, uncached render is cheap and always reflects the latest posts.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 // XML-escape helper — RSS is strict about <>&"'
 function esc(s: string | undefined): string {
@@ -21,6 +24,8 @@ export async function GET() {
   const posts = await apiPublicSafe<ApiPost[]>(
     "/posts?limit=20&status=published",
     [],
+    undefined,
+    0, // no-store: always fetch the latest 20 published posts
   );
 
   const items = posts

@@ -3,13 +3,20 @@ import { apiPublicSafe } from "@/lib/apiServer";
 import type { ApiCategory, ApiPost } from "@/lib/models";
 import { absoluteUrl } from "@/lib/site";
 
-// Re-generate the sitemap on a schedule so newly-published posts appear.
-export const revalidate = 300;
+// Always render the sitemap fresh from the backend. Previously this route was
+// statically cached (revalidate=300 + a cached fetch), which froze the sitemap
+// at build time — newly-published posts never appeared and on-demand
+// revalidation of this metadata route proved unreliable. The sitemap is
+// low-traffic (crawlers only), so rendering it dynamically with an uncached
+// fetch is cheap and guarantees every published post is always listed.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [posts, categories] = await Promise.all([
-    apiPublicSafe<ApiPost[]>("/posts?limit=1000&status=published", []),
-    apiPublicSafe<ApiCategory[]>("/categories", []),
+    // revalidate=0 → fetched with cache: "no-store" so we always see current posts.
+    apiPublicSafe<ApiPost[]>("/posts?limit=1000&status=published", [], undefined, 0),
+    apiPublicSafe<ApiCategory[]>("/categories", [], undefined, 0),
   ]);
 
   const now = new Date();
