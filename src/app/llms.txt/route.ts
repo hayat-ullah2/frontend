@@ -5,15 +5,21 @@ import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
 // llms.txt — an emerging standard (like robots.txt, but for AI/LLMs). It gives
 // ChatGPT, Gemini, Perplexity, Copilot etc. a concise, curated map of what this
 // site is about and its best pages, so they can understand and cite us well.
-// Served as plain-text markdown at /llms.txt. Refreshed on the ISR schedule so
-// newly-published articles appear.
-export const revalidate = 300;
-export const dynamic = "force-static";
+// Served as plain-text markdown at /llms.txt.
+//
+// Rendered fresh on every request (uncached). Previously this used
+// `force-static` + a cached fetch, which froze the file at build time — AI
+// crawlers then saw a stale, partial list that never picked up new articles.
+// This file is the single most important signal for the AI-search features we
+// want to grow, so we always serve the complete, current set of posts.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
   const [posts, categories] = await Promise.all([
-    apiPublicSafe<ApiPost[]>("/posts?limit=40&status=published", []),
-    apiPublicSafe<ApiCategory[]>("/categories", []),
+    // revalidate=0 → cache: "no-store"; limit high enough to list every post.
+    apiPublicSafe<ApiPost[]>("/posts?limit=1000&status=published", [], undefined, 0),
+    apiPublicSafe<ApiCategory[]>("/categories", [], undefined, 0),
   ]);
 
   const categoryLines = categories
@@ -67,7 +73,7 @@ ${articleLines || "- (none published yet)"}
   return new Response(body, {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+      "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
     },
   });
 }

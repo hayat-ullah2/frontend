@@ -84,7 +84,15 @@ export function blogPostingSchema(post: ApiPost) {
     keywords: [post.primaryKeyword, ...(post.tags?.map((t) => t.name) ?? [])]
       .filter(Boolean)
       .join(", ") || undefined,
-    inLanguage: post.targetLanguage || undefined,
+    // Free, ad-supported content — tell crawlers there's no paywall so the page
+    // is eligible for rich results and AI-answer citation.
+    isAccessibleForFree: true,
+    // Name the primary topic as an entity so Google / AI assistants can map this
+    // article to the thing it's actually about (helps AI Overview citation).
+    about: post.primaryKeyword
+      ? { "@type": "Thing", name: post.primaryKeyword }
+      : undefined,
+    inLanguage: post.targetLanguage || "en-US",
   };
 }
 
