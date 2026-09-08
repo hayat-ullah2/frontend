@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import AgentOptimizer from "@/components/admin/AgentOptimizer";
 import ImageUploader from "@/components/admin/ImageUploader";
 import RichTextEditor, { type RichTextEditorHandle } from "@/components/admin/RichTextEditor";
 import SeoPanel from "@/components/admin/SeoPanel";
@@ -738,6 +739,14 @@ export default function PostForm({
             internalLinkSuggestions={internalLinkSuggestions}
             onInsertLink={insertInternalLink}
           />
+
+          {isEdit && initial?.slug && (
+            <AgentOptimizer
+              slug={initial.slug}
+              onInsertLink={insertInternalLink}
+              onApplied={() => router.refresh()}
+            />
+          )}
 
           <div className="card p-6 space-y-5">
             <h3 className="font-semibold">Publish settings</h3>

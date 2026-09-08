@@ -99,6 +99,29 @@ export const env = {
     apiKey: process.env.AI_API_KEY ?? "",
     model: process.env.AI_MODEL ?? "",
   },
+
+  // Optional Google Search Console integration (SEO Agent). Provides REAL
+  // clicks/impressions/CTR/position + query/page data. All four values are
+  // required to activate; otherwise the agent honestly reports "Data
+  // unavailable". Obtain a refresh token once during setup (see
+  // SEO_AGENT_SETUP.md). Keys are server-side only.
+  gsc: {
+    clientId: process.env.GSC_CLIENT_ID ?? "",
+    clientSecret: process.env.GSC_CLIENT_SECRET ?? "",
+    refreshToken: process.env.GSC_REFRESH_TOKEN ?? "",
+    // The GSC property, e.g. "https://nexversal.com/" or "sc-domain:nexversal.com".
+    siteUrl: process.env.GSC_SITE_URL ?? "",
+  },
+
+  // SEO Agent strategy defaults (US-focused, young-domain long-tail-first).
+  seo: {
+    domainStage: (process.env.SEO_DOMAIN_STAGE ?? "new") as
+      | "new"
+      | "growing"
+      | "established",
+    targetCountry: process.env.SEO_TARGET_COUNTRY ?? "us",
+    targetLanguage: process.env.SEO_TARGET_LANGUAGE ?? "en-US",
+  },
 };
 
 export const isProd = env.nodeEnv === "production";
