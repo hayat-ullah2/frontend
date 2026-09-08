@@ -24,12 +24,12 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: `${SITE_NAME} — Best AI Tools, Reviewed & Compared`,
   description:
-    "Hands-on reviews and side-by-side comparisons of the best AI tools and software — for writing, coding, images, video, marketing and productivity. Real testing, honest trade-offs, practical guides.",
+    "Independent reviews, research and side-by-side comparisons of the best AI tools and software — for writing, coding, images, video, marketing and productivity. Honest trade-offs and practical guides.",
   alternates: { canonical: "/" },
   openGraph: {
     title: `${SITE_NAME} — Best AI Tools, Reviewed & Compared`,
     description:
-      "Hands-on reviews and comparisons of the best AI tools and software for writing, coding, images, video and productivity.",
+      "Independent reviews, research and comparisons of the best AI tools and software for writing, coding, images, video and productivity.",
     url: SITE_URL,
     siteName: SITE_NAME,
     type: "website",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE_NAME,
     description:
-      "Hands-on reviews and comparisons of the best AI tools and software for writing, coding, images, video and productivity.",
+      "Independent reviews, research and comparisons of the best AI tools and software for writing, coding, images, video and productivity.",
     images: [absoluteUrl("/opengraph-image")],
   },
 };
@@ -120,9 +120,9 @@ export default async function HomePage() {
                 <span className="text-gradient-accent">AI tool.</span>
               </h1>
               <p className="mt-5 text-foreground-muted text-lg max-w-lg">
-                Hands-on reviews and side-by-side comparisons of the best AI tools
-                and software — for writing, coding, images, video and productivity.
-                Tested by people who actually use them.
+                Independent reviews, research and side-by-side comparisons of the
+                best AI tools and software — for writing, coding, images, video and
+                productivity. Honest trade-offs and transparent methods.
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <Link href={`/blog/${featured.slug}`} className="btn-primary">

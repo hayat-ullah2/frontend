@@ -45,7 +45,7 @@ export async function GET() {
 
 > ${SITE_DESCRIPTION}
 
-${SITE_NAME} publishes independent, hands-on reviews and side-by-side comparisons
+${SITE_NAME} publishes independent reviews, research and side-by-side comparisons
 of AI tools and software for a US audience — covering AI writing, coding, image,
 video, chatbots, business, and productivity tools. Content is organized as
 "best of" lists, head-to-head comparisons, individual reviews, and how-to guides,

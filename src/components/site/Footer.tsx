@@ -50,9 +50,9 @@ export default async function Footer() {
               </span>
             </Link>
             <p className="mt-4 text-sm text-foreground-muted max-w-sm leading-relaxed">
-              Independent reviews and comparisons of the best AI tools and
-              software — for writing, coding, images, video, business and
-              productivity. Tested, not just listed.
+              Independent reviews, research and comparisons of the best AI tools
+              and software — for writing, coding, images, video, business and
+              productivity. Researched in depth, not just listed.
             </p>
             <div className="mt-5 flex items-center gap-2">
               <a
