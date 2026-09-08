@@ -30,7 +30,7 @@ const items = [
   { href: "/admin/subscribers", label: "Audience", icon: Mail },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/comments", label: "Comments", icon: MessageSquare },
-  { href: "/admin/seo", label: "SEO", icon: Settings },
+  { href: "/admin/seo", label: "SEO Agent", icon: Settings },
 ];
 
 export default function Sidebar({ user }: { user: ApiUser | null }) {

@@ -4,6 +4,7 @@ export * from "./Comment.js";
 export * from "./ContactMessage.js";
 export * from "./Event.js";
 export * from "./Post.js";
+export * from "./SeoChange.js";
 export * from "./Subscriber.js";
 export * from "./Tag.js";
 export * from "./User.js";

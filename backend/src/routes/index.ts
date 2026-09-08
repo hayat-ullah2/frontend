@@ -6,6 +6,7 @@ import commentRoutes from "./comment.routes.js";
 import eventRoutes from "./event.routes.js";
 import inboundRoutes from "./inbound.routes.js";
 import postRoutes from "./post.routes.js";
+import seoRoutes from "./seo.routes.js";
 import statsRoutes from "./stats.routes.js";
 import tagRoutes from "./tag.routes.js";
 import uploadRoutes from "./upload.routes.js";
@@ -24,6 +25,7 @@ router.get("/health", (_req, res) => {
 
 router.use("/auth", authRoutes);
 router.use("/posts", postRoutes);
+router.use("/seo", seoRoutes);
 router.use("/categories", categoryRoutes);
 router.use("/tags", tagRoutes);
 router.use("/comments", commentRoutes);

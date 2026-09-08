@@ -1,149 +1,171 @@
-import Link from "next/link";
 import Topbar from "@/components/admin/Topbar";
 import { apiServerSafe } from "@/lib/apiServer";
-import type { ApiPost } from "@/lib/models";
-import { analyzeSeo, ratingFor, type SeoAnalysis } from "@/lib/seo/engine";
-import { COUNTRY_BY_CODE } from "@/lib/seo/geo";
-import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
-const SITE_HOST = (() => {
-  try {
-    return new URL(SITE_URL).host;
-  } catch {
-    return undefined;
-  }
-})();
-
-function toEngineInput(p: ApiPost) {
-  return {
-    title: p.title,
-    slug: p.slug,
-    excerpt: p.excerpt,
-    content: p.content,
-    metaTitle: p.seo?.title,
-    metaDescription: p.seo?.description,
-    canonical: p.seo?.canonical,
-    ogImage: p.seo?.ogImage,
-    cover: p.cover,
-    primaryKeyword: p.primaryKeyword,
-    secondaryKeywords: p.secondaryKeywords,
-    targetCountry: p.targetCountries?.[0],
-    targetLanguage: p.targetLanguage,
-    siteHost: SITE_HOST,
+type Overview = {
+  profile: {
+    domain: string;
+    domainStage: "new" | "growing" | "established";
+    content: {
+      totalPosts: number;
+      published: number;
+      drafts: number;
+      categories: number;
+      clusters: number;
+      avgSeoScore: number;
+      topicalCoverage: { name: string; count: number }[];
+    };
+    search: {
+      connected: boolean;
+      source: string;
+      clicks: number | null;
+      impressions: number | null;
+      ctr: number | null;
+      avgPosition: number | null;
+      period?: { startDate: string; endDate: string };
+    };
   };
-}
+  health: {
+    avgScore: number;
+    scoring80Plus: number;
+    scoringBelow60: number;
+    errorCount: number;
+    warningCount: number;
+  };
+  providers: {
+    searchConsole: boolean;
+    keyword: boolean;
+    serp: boolean;
+    trends: boolean;
+    backlink: boolean;
+  };
+  aiConfigured: boolean;
+};
 
-export default async function AdminSeoPage() {
-  // Pull every status so drafts count toward the dashboard.
-  const [published, drafts, scheduled] = await Promise.all([
-    apiServerSafe<ApiPost[]>("/posts?status=published&limit=1000", []),
-    apiServerSafe<ApiPost[]>("/posts?status=draft&limit=1000", []),
-    apiServerSafe<ApiPost[]>("/posts?status=scheduled&limit=1000", []),
-  ]);
-  const posts = [...published, ...drafts, ...scheduled];
+export default async function SeoOverviewPage() {
+  const data = await apiServerSafe<Overview | null>("/seo/overview", null);
 
-  // Live analysis per post — accurate even for posts saved before this feature.
-  const analyzed = posts.map((p) => ({ post: p, seo: analyzeSeo(toEngineInput(p)) }));
-
-  const total = posts.length;
-  const scores = analyzed.map((a) => a.seo.score);
-  const avg = scores.length ? Math.round(scores.reduce((s, x) => s + x, 0) / scores.length) : 0;
-  const above80 = scores.filter((s) => s >= 80).length;
-  const below60 = scores.filter((s) => s < 60).length;
-
-  const missingMeta = posts.filter((p) => !(p.seo?.description || p.excerpt)).length;
-  const missingCover = posts.filter((p) => !p.cover).length;
-  const missingKeyword = posts.filter((p) => !p.primaryKeyword).length;
-  const missingAlt = analyzed.filter((a) => a.seo.metrics.imagesMissingAlt > 0).length;
-
-  // Country distribution.
-  const countryCounts = new Map<string, number>();
-  for (const p of posts) {
-    const list = p.targetCountries?.length ? p.targetCountries : ["global"];
-    for (const c of list) countryCounts.set(c, (countryCounts.get(c) ?? 0) + 1);
+  if (!data) {
+    return (
+      <>
+        <Topbar
+          title="SEO Agent"
+          subtitle="Nexversal SEO intelligence — real data only."
+        />
+        <div className="p-6">
+          <div className="card p-6">
+            <p className="text-sm text-foreground-muted">Could not load SEO overview.</p>
+          </div>
+        </div>
+      </>
+    );
   }
-  const countryDist = [...countryCounts.entries()]
-    .map(([code, count]) => ({
-      code,
-      name: COUNTRY_BY_CODE[code]?.name ?? code,
-      count,
-    }))
-    .sort((a, b) => b.count - a.count);
 
-  const topPerforming = [...analyzed].sort((a, b) => b.seo.score - a.seo.score).slice(0, 5);
-  const needsWork = [...analyzed]
-    .filter((a) => a.seo.score < 60)
-    .sort((a, b) => a.seo.score - b.seo.score)
-    .slice(0, 5);
+  const { profile, health, providers, aiConfigured } = data;
+  const { content, search } = profile;
+  const maxCoverage = Math.max(1, ...content.topicalCoverage.map((c) => c.count));
 
-  const health = [
-    { label: "Posts missing a meta description", count: missingMeta },
-    { label: "Posts missing a featured image", count: missingCover },
-    { label: "Posts missing a primary keyword", count: missingKeyword },
-    { label: "Posts with images missing alt text", count: missingAlt },
-  ];
+  const healthLabel =
+    health.avgScore >= 75 ? "Good" : health.avgScore >= 60 ? "Needs work" : "Poor";
+  const healthColor =
+    health.avgScore >= 75
+      ? "text-emerald-300"
+      : health.avgScore >= 60
+      ? "text-amber-300"
+      : "text-rose-300";
 
   return (
     <>
       <Topbar
-        title="SEO dashboard"
-        subtitle="Content-quality scores, keyword coverage, and geo distribution across your library."
+        title="SEO Agent"
+        subtitle="Nexversal SEO intelligence — real data only."
       />
 
       <div className="p-6 space-y-6">
-        {/* Score cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
-          <Stat label="Total posts" value={total} />
-          <Stat label="Published" value={published.length} />
-          <Stat label="Drafts" value={drafts.length} />
-          <Stat label="Avg SEO score" value={avg} accent={ratingColor(avg)} />
-          <Stat label="Scoring 80+" value={above80} accent="text-emerald-300" />
-          <Stat label="Below 60" value={below60} accent="text-rose-300" />
+        {/* Health hero */}
+        <div className="card p-6 flex flex-col sm:flex-row sm:items-center gap-6">
+          <div className="flex items-baseline gap-2">
+            <span className={`text-5xl font-bold tabular-nums ${healthColor}`}>
+              {health.avgScore}
+            </span>
+            <span className="text-foreground-subtle text-lg">/ 100</span>
+          </div>
+          <div>
+            <p className="font-semibold">
+              SEO health: <span className={healthColor}>{healthLabel}</span>
+            </p>
+            <p className="text-xs text-foreground-subtle mt-1">
+              {profile.domain} · {profile.domainStage} domain · avg content-quality score
+              across your library.
+            </p>
+          </div>
+        </div>
+
+        {/* Stat cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-7 gap-4">
+          <Stat label="Published" value={content.published} />
+          <Stat label="Drafts" value={content.drafts} />
+          <Stat label="Categories" value={content.categories} />
+          <Stat label="Clusters" value={content.clusters} />
+          <Stat label="Avg SEO score" value={content.avgSeoScore} accent={healthColor} />
+          <Stat label="Scoring 80+" value={health.scoring80Plus} accent="text-emerald-300" />
+          <Stat label="Below 60" value={health.scoringBelow60} accent="text-rose-300" />
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Health */}
+          {/* Search Console */}
           <div className="card p-6 h-fit">
-            <h2 className="font-semibold">Content health</h2>
-            <p className="text-xs text-foreground-subtle">Fixable issues across all posts</p>
-            <ul className="mt-4 space-y-3">
-              {health.map((h) => (
-                <li key={h.label} className="flex items-center gap-3 text-sm">
-                  <span
-                    className={`w-7 h-7 shrink-0 rounded-full grid place-items-center text-xs font-semibold ${
-                      h.count === 0
-                        ? "bg-emerald-500/15 text-emerald-300"
-                        : "bg-amber-500/15 text-amber-300"
-                    }`}
-                  >
-                    {h.count === 0 ? "✓" : h.count}
-                  </span>
-                  <span className="text-foreground-muted">{h.label}</span>
-                </li>
-              ))}
-            </ul>
+            <h2 className="font-semibold">Search Console</h2>
+            <p className="text-xs text-foreground-subtle">{search.source}</p>
+            {search.connected ? (
+              <>
+                <div className="mt-4 grid grid-cols-2 gap-4">
+                  <SearchMetric label="Clicks" value={fmtNum(search.clicks)} />
+                  <SearchMetric label="Impressions" value={fmtNum(search.impressions)} />
+                  <SearchMetric
+                    label="CTR"
+                    value={search.ctr != null ? `${(search.ctr * 100).toFixed(1)}%` : "—"}
+                  />
+                  <SearchMetric
+                    label="Avg position"
+                    value={search.avgPosition != null ? search.avgPosition.toFixed(1) : "—"}
+                  />
+                </div>
+                {search.period && (
+                  <p className="mt-4 text-xs text-foreground-subtle">
+                    {search.period.startDate} → {search.period.endDate}
+                  </p>
+                )}
+              </>
+            ) : (
+              <div className="mt-4">
+                <p className="text-sm text-foreground-muted">Data unavailable</p>
+                <p className="text-xs text-foreground-subtle mt-1">
+                  Connect Google Search Console in Settings.
+                </p>
+              </div>
+            )}
           </div>
 
-          {/* Country distribution */}
+          {/* Topical coverage */}
           <div className="card p-6 lg:col-span-2">
-            <h2 className="font-semibold">Country targeting</h2>
-            <p className="text-xs text-foreground-subtle">How your library is geo-targeted</p>
-            {countryDist.length === 0 ? (
-              <p className="mt-4 text-sm text-foreground-subtle">No posts yet.</p>
+            <h2 className="font-semibold">Topical coverage</h2>
+            <p className="text-xs text-foreground-subtle">Where your content is concentrated</p>
+            {content.topicalCoverage.length === 0 ? (
+              <p className="mt-4 text-sm text-foreground-subtle">No topics yet.</p>
             ) : (
               <ul className="mt-4 space-y-2.5">
-                {countryDist.map((c) => (
-                  <li key={c.code}>
+                {content.topicalCoverage.map((c) => (
+                  <li key={c.name}>
                     <div className="flex justify-between text-xs mb-1">
                       <span className="text-foreground-muted">{c.name}</span>
-                      <span className="text-foreground-subtle">{c.count}</span>
+                      <span className="text-foreground-subtle tabular-nums">{c.count}</span>
                     </div>
                     <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
                       <div
                         className="h-full rounded-full bg-gradient-accent"
-                        style={{ width: `${total ? (c.count / total) * 100 : 0}%` }}
+                        style={{ width: `${(c.count / maxCoverage) * 100}%` }}
                       />
                     </div>
                   </li>
@@ -153,38 +175,32 @@ export default async function AdminSeoPage() {
           </div>
         </div>
 
-        {/* Tables */}
-        <div className="grid lg:grid-cols-2 gap-6">
-          <ScoreTable title="Top SEO performers" rows={topPerforming} empty="No posts yet." />
-          <ScoreTable
-            title="Needs improvement (score < 60)"
-            rows={needsWork}
-            empty="Nothing below 60 — nice work."
-          />
+        {/* Data sources */}
+        <div className="card p-6">
+          <h2 className="font-semibold">Data sources</h2>
+          <p className="text-xs text-foreground-subtle">Connected providers powering this dashboard</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <ProviderPill label="Search Console" on={providers.searchConsole} />
+            <ProviderPill label="Keyword API" on={providers.keyword} />
+            <ProviderPill label="SERP API" on={providers.serp} />
+            <ProviderPill label="Trends" on={providers.trends} />
+            <ProviderPill label="Backlinks" on={providers.backlink} />
+            <ProviderPill
+              label={aiConfigured ? "AI configured" : "Heuristics only"}
+              on={aiConfigured}
+            />
+          </div>
         </div>
       </div>
     </>
   );
 }
 
-function ratingColor(score: number) {
-  const r = ratingFor(score);
-  return r === "excellent" || r === "good"
-    ? "text-emerald-300"
-    : r === "needs-improvement"
-    ? "text-amber-300"
-    : "text-rose-300";
+function fmtNum(v: number | null) {
+  return v != null ? v.toLocaleString("en-US") : "—";
 }
 
-function Stat({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: number;
-  accent?: string;
-}) {
+function Stat({ label, value, accent }: { label: string; value: number; accent?: string }) {
   return (
     <div className="card p-4">
       <p className={`text-2xl font-bold tabular-nums ${accent ?? ""}`}>{value}</p>
@@ -193,46 +209,26 @@ function Stat({
   );
 }
 
-function ScoreTable({
-  title,
-  rows,
-  empty,
-}: {
-  title: string;
-  rows: { post: ApiPost; seo: SeoAnalysis }[];
-  empty: string;
-}) {
+function SearchMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="card overflow-hidden">
-      <div className="p-5 border-b border-white/5">
-        <h2 className="font-semibold">{title}</h2>
-      </div>
-      {rows.length === 0 ? (
-        <p className="p-5 text-sm text-foreground-subtle">{empty}</p>
-      ) : (
-        <table className="w-full text-sm">
-          <tbody>
-            {rows.map(({ post, seo }) => (
-              <tr key={post._id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02]">
-                <td className="p-4">
-                  <Link href={`/admin/blogs/${post.slug}/edit`} className="hover:text-foreground">
-                    {post.title}
-                  </Link>
-                  <span className="ml-2 text-[10px] uppercase tracking-wider text-foreground-subtle">
-                    {post.status}
-                  </span>
-                </td>
-                <td className="p-4 text-right">
-                  <span className={`font-semibold tabular-nums ${ratingColor(seo.score)}`}>
-                    {seo.score}
-                  </span>
-                  <span className="text-foreground-subtle text-xs"> / 100</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+    <div>
+      <p className="text-xl font-bold tabular-nums">{value}</p>
+      <p className="text-xs text-foreground-subtle mt-0.5">{label}</p>
     </div>
+  );
+}
+
+function ProviderPill({ label, on }: { label: string; on: boolean }) {
+  return (
+    <span
+      className={`chip ${
+        on ? "text-emerald-300 border-emerald-500/30" : "text-foreground-subtle"
+      }`}
+    >
+      <span
+        className={`w-1.5 h-1.5 rounded-full ${on ? "bg-emerald-400" : "bg-white/20"}`}
+      />
+      {label}
+    </span>
   );
 }

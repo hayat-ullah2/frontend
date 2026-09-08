@@ -12,6 +12,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/services/seo/**/*.test.ts",
+    "test:seo": "tsx src/services/seo/seo.test.ts",
     "seed:admin": "tsx src/scripts/seed-admin.ts",
     "seed:content": "tsx src/scripts/seed-content.ts"
   },
