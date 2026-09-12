@@ -50,8 +50,8 @@ export default function EditorialPolicyPage() {
           </h2>
           <p className="mt-3">
             If we get something wrong, tell us at{" "}
-            <a href="mailto:hello@nexversal.com" className="text-foreground underline underline-offset-2">
-              hello@nexversal.com
+            <a href="mailto:hayatka472@gmail.com" className="text-foreground underline underline-offset-2">
+              hayatka472@gmail.com
             </a>
             . We aim to review and correct verified errors within 24–72 hours, and
             we note material corrections openly.

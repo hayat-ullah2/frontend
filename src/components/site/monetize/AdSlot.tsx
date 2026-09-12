@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { CONSENT_EVENT, hasConsent } from "@/lib/consent";
+import { useEffect, useRef } from "react";
+import { hasConsent } from "@/lib/consent";
 
 const CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
 const DEFAULT_SLOT = process.env.NEXT_PUBLIC_ADSENSE_SLOT;
 
 declare global {
   interface Window {
-    adsbygoogle?: Record<string, unknown>[];
+    adsbygoogle?: Record<string, unknown>[] & { requestNonPersonalizedAds?: number };
   }
 }
 
@@ -16,8 +16,11 @@ declare global {
  * A single display-ad placement. Behavior:
  *  • no publisher id configured → renders nothing in production (a labelled
  *    placeholder in dev so you can see where ads will go);
- *  • configured but no advertising consent → renders nothing;
- *  • configured + consent → renders a responsive AdSense unit.
+ *  • configured, no advertising consent → renders a NON-personalized ad
+ *    (GDPR-safe fallback; no ad-targeting cookies);
+ *  • configured + advertising consent → renders a personalized AdSense unit.
+ * Ads are shown to everyone so the site stays eligible for AdSense review and
+ * earns on all traffic; personalization is what consent controls.
  * Reserves height to avoid layout shift (protects Core Web Vitals).
  */
 export default function AdSlot({
@@ -31,27 +34,26 @@ export default function AdSlot({
   minHeight?: number;
   label?: boolean;
 }) {
-  const [allowed, setAllowed] = useState(false);
   const pushed = useRef(false);
   const adSlot = slot ?? DEFAULT_SLOT;
 
   useEffect(() => {
-    const check = () => setAllowed(hasConsent("advertising"));
-    check();
-    window.addEventListener(CONSENT_EVENT, check);
-    return () => window.removeEventListener(CONSENT_EVENT, check);
-  }, []);
-
-  useEffect(() => {
-    if (allowed && CLIENT && adSlot && !pushed.current) {
+    if (CLIENT && adSlot && !pushed.current) {
       try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        const ads = (window.adsbygoogle = window.adsbygoogle || []);
+        // No advertising consent yet → ask Google for non-personalized ads
+        // (no targeting cookies). With consent, ads are personalized (higher
+        // revenue). Read consent synchronously at fill time so it's accurate.
+        if (!hasConsent("advertising")) {
+          ads.requestNonPersonalizedAds = 1;
+        }
+        ads.push({});
         pushed.current = true;
       } catch {
         /* AdSense not ready yet — it will retry on next fill */
       }
     }
-  }, [allowed, adSlot]);
+  }, [adSlot]);
 
   // Nothing configured yet.
   if (!CLIENT || !adSlot) {
@@ -66,9 +68,6 @@ export default function AdSlot({
       </div>
     );
   }
-
-  // Configured, but the visitor hasn't allowed ads.
-  if (!allowed) return null;
 
   return (
     <div className={className}>
