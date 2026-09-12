@@ -283,6 +283,16 @@ export async function createPost(req: Request, res: Response) {
     author: req.user.sub,
   });
 
+  // "Featured" is exclusive — only one homepage hero at a time. If this new
+  // post is featured, demote every other featured post so the homepage shows
+  // exactly this one.
+  if (post.featured) {
+    await Post.updateMany(
+      { _id: { $ne: post._id }, featured: true },
+      { $set: { featured: false } },
+    );
+  }
+
   // Fire-and-forget: tell the frontend to rebuild the affected pages.
   const cat = post.category
     ? await Category.findById(post.category).select("slug")
@@ -328,6 +338,15 @@ export async function updatePost(req: Request, res: Response) {
     { new: true, runValidators: true },
   );
   if (post) {
+    // "Featured" is exclusive: only one homepage hero at a time. If this save
+    // turned featuring ON, demote every other featured post so the homepage
+    // shows exactly the article the admin just picked.
+    if (post.featured) {
+      await Post.updateMany(
+        { _id: { $ne: post._id }, featured: true },
+        { $set: { featured: false } },
+      );
+    }
     const cat = post.category
       ? await Category.findById(post.category).select("slug")
       : null;
