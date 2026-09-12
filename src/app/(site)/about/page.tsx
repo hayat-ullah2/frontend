@@ -187,8 +187,14 @@ export default function AboutPage() {
         </div>
         <div className="mt-10 card p-8 sm:p-10">
           <div className="flex flex-col sm:flex-row sm:items-center gap-6">
-            <div className="w-20 h-20 shrink-0 rounded-2xl bg-gradient-accent grid place-items-center text-white">
-              <User size={36} />
+            <div className="relative w-20 h-20 shrink-0 rounded-2xl overflow-hidden ring-1 ring-white/10">
+              <Image
+                src="https://avatars.githubusercontent.com/u/212770842?s=400&u=2e783d9eba0ffe5402f8b4b3ea7f7c7faa3511af&v=4"
+                alt="Hayat Ullah"
+                fill
+                sizes="80px"
+                className="object-cover"
+              />
             </div>
             <div>
               <h3 className="text-2xl font-bold tracking-tight">Hayat Ullah</h3>
@@ -404,7 +410,12 @@ export default function AboutPage() {
       {/* Contact strip */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="card p-8 grid sm:grid-cols-2 gap-6 items-center">
-          <Info icon={<Mail size={18} />} label="Email" value="hayatka472@gmail.com" />
+          <Info
+            icon={<Mail size={18} />}
+            label="Email"
+            value="hayatka472@gmail.com"
+            href="mailto:hayatka472@gmail.com"
+          />
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-gradient-accent grid place-items-center text-white">
               <ArrowRight size={18} />
@@ -432,10 +443,12 @@ function Info({
   icon,
   label,
   value,
+  href,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
+  href?: string;
 }) {
   return (
     <div className="flex items-center gap-4">
@@ -444,7 +457,13 @@ function Info({
       </div>
       <div>
         <p className="text-xs text-foreground-subtle uppercase tracking-wider">{label}</p>
-        <p className="text-foreground font-medium">{value}</p>
+        {href ? (
+          <a href={href} className="text-foreground font-medium hover:underline">
+            {value}
+          </a>
+        ) : (
+          <p className="text-foreground font-medium">{value}</p>
+        )}
       </div>
     </div>
   );
