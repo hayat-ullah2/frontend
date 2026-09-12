@@ -71,8 +71,8 @@ export default function HowWeTestPage() {
           </h2>
           <p className="mt-3">
             Email{" "}
-            <a href="mailto:hello@nexversal.com" className="text-foreground underline underline-offset-2">
-              hello@nexversal.com
+            <a href="mailto:hayatka472@gmail.com" className="text-foreground underline underline-offset-2">
+              hayatka472@gmail.com
             </a>
             . We correct mistakes quickly and openly. See our{" "}
             <a href="/editorial-policy" className="text-foreground underline underline-offset-2">

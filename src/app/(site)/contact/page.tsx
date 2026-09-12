@@ -17,15 +17,15 @@ export const metadata: Metadata = {
 const faqs = [
   {
     q: "How can I pitch an article?",
-    a: "Send a one-paragraph pitch to hello@nexversal.com. We're a small editorial operation, so replies can take up to two weeks.",
+    a: "Send a one-paragraph pitch to hayatka472@gmail.com. We're a small editorial operation, so replies can take up to two weeks.",
   },
   {
     q: "Do you pay writers?",
-    a: "When we commission a piece, we agree on rates with the writer directly. Send your pitch to hello@nexversal.com and we'll take it from there.",
+    a: "When we commission a piece, we agree on rates with the writer directly. Send your pitch to hayatka472@gmail.com and we'll take it from there.",
   },
   {
     q: "Can I republish a Nexversal article?",
-    a: "For non-commercial use with attribution, yes. For commercial syndication, please email hello@nexversal.com.",
+    a: "For non-commercial use with attribution, yes. For commercial syndication, please email hayatka472@gmail.com.",
   },
   {
     q: "How do you choose what to cover?",
@@ -33,7 +33,7 @@ const faqs = [
   },
   {
     q: "Where can I report a correction?",
-    a: "Use the correction link at the bottom of any article, or email hello@nexversal.com. We aim to update within a few days.",
+    a: "Use the correction link at the bottom of any article, or email hayatka472@gmail.com. We aim to update within a few days.",
   },
 ];
 
@@ -75,8 +75,8 @@ export default function ContactPage() {
               <Line
                 icon={<Mail size={16} />}
                 label="Email"
-                value="hello@nexversal.com"
-                href="mailto:hello@nexversal.com"
+                value="hayatka472@gmail.com"
+                href="mailto:hayatka472@gmail.com"
               />
               <Line
                 icon={<Phone size={16} />}
