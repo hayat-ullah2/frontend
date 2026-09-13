@@ -4,7 +4,9 @@ import Script from "next/script";
 
 // Publisher id, e.g. "ca-pub-1234567890123456". Set in .env.local once you're
 // approved by Google AdSense. Until then this renders nothing.
-const CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+// Strip stray whitespace/newlines that can ride along when the id is pasted
+// into a hosting env var — a trailing newline would corrupt the script URL.
+const CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.replace(/\s+/g, "") || undefined;
 
 /**
  * Loads the AdSense library whenever a publisher id is configured. The loader

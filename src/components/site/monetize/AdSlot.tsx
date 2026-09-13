@@ -3,8 +3,10 @@
 import { useEffect, useRef } from "react";
 import { hasConsent } from "@/lib/consent";
 
-const CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
-const DEFAULT_SLOT = process.env.NEXT_PUBLIC_ADSENSE_SLOT;
+// Strip stray whitespace/newlines that can ride along when the id is pasted
+// into a hosting env var.
+const CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.replace(/\s+/g, "") || undefined;
+const DEFAULT_SLOT = process.env.NEXT_PUBLIC_ADSENSE_SLOT?.replace(/\s+/g, "") || undefined;
 
 declare global {
   interface Window {
