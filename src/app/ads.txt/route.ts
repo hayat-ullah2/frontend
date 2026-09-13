@@ -6,7 +6,10 @@ export const dynamic = "force-static";
 export const revalidate = 86400; // a day is plenty; it rarely changes
 
 export function GET() {
-  const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT; // e.g. ca-pub-123…
+  // Strip any stray whitespace/newlines that can sneak in when the id is
+  // pasted into a hosting env var — otherwise the ads.txt line breaks across
+  // multiple lines and networks reject it.
+  const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.replace(/\s+/g, ""); // e.g. ca-pub-123…
   const pub = client?.replace(/^ca-/, ""); // → pub-123…
 
   const lines: string[] = [];
