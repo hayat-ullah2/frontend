@@ -19,7 +19,7 @@ import { apiPublic, apiPublicSafe } from "@/lib/apiServer";
 import { ApiError } from "@/lib/api";
 import type { ApiComment, ApiPost } from "@/lib/models";
 import { blogPostingSchema, breadcrumbSchema, faqSchema } from "@/lib/schema";
-import { SITE_NAME, absoluteUrl } from "@/lib/site";
+import { SITE_AUTHOR_INFO, SITE_NAME, absoluteUrl } from "@/lib/site";
 
 // P4.14 — Regenerate an individual post every 5 minutes (also revalidated on
 // demand via /api/revalidate when the admin edits/publishes).
@@ -58,7 +58,7 @@ export async function generateMetadata(
         type: "article",
         publishedTime: post.publishedAt,
         modifiedTime: post.updatedAt ?? post.publishedAt,
-        authors: [post.authorName].filter(Boolean) as string[],
+        authors: [SITE_AUTHOR_INFO.name],
         images: cover.map((c) => ({ url: c, width: 1200, height: 630, alt: post.title })),
         tags: post.tags?.map((t) => t.name),
       },
@@ -142,14 +142,19 @@ export default async function SinglePostPage(props: PageProps<"/blog/[slug]">) {
 
             {/* Byline bar */}
             <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-white/10 py-4 text-sm">
-              {/* Public author: only shown when the content team has assigned a
-                  legitimate author. Never falls back to the admin account. */}
-              {post.authorName && (
-                <span className="text-foreground-muted">
-                  Written by{" "}
-                  <span className="text-foreground font-medium">{post.authorName}</span>
-                </span>
-              )}
+              {/* Single-author publication: every post is bylined to the
+                  founder/editor and links to their verified bio (E-E-A-T).
+                  The per-post `authorName` free text is intentionally ignored
+                  so the author identity is always consistent site-wide. */}
+              <span className="text-foreground-muted">
+                Written by{" "}
+                <Link
+                  href={SITE_AUTHOR_INFO.profilePath}
+                  className="text-foreground font-medium hover:underline"
+                >
+                  {SITE_AUTHOR_INFO.name}
+                </Link>
+              </span>
               {post.publishedAt && (
                 <span className="text-foreground-subtle">
                   {new Date(post.publishedAt).toLocaleDateString("en-US", {

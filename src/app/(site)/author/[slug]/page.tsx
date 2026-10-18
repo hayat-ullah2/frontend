@@ -50,7 +50,12 @@ export default async function AuthorPage(props: PageProps<"/author/[slug]">) {
   try {
     author = await apiPublic<AuthorProfile>(`/users/${id}/profile`);
   } catch (err) {
-    if (err instanceof ApiError && err.status === 404) notFound();
+    // Any backend HTTP failure for this slug — a 404, or a 400/500 from a
+    // malformed id such as a name-slug (`/author/shahid-kn`) — must render a
+    // clean 404, never a 500 error page. A 500 reads as "site broken" to
+    // crawlers and AdSense review. Only genuinely unexpected (non-API) errors
+    // bubble up.
+    if (err instanceof ApiError) notFound();
     throw err;
   }
 

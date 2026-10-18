@@ -123,6 +123,12 @@ export async function listPosts(req: Request, res: Response) {
       .sort({ publishedAt: -1, createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
+      // List views (cards, sitemap, feed, admin table) never render the full
+      // article body — only title/excerpt/cover/meta. Excluding the heavy
+      // `content` field here cuts the list payload by ~98% (each post's HTML
+      // is ~80KB), which was bloating the homepage/blog/category RSC payload
+      // and tanking FCP/LCP. The single-post endpoint still returns content.
+      .select("-content")
       .populate("category", "name slug color")
       .populate("author", "name avatar")
       .populate("tags", "name slug"),
