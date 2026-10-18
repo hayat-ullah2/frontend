@@ -6,7 +6,10 @@
   --background-soft: #1f1f1f;
   --foreground: #f4f4f5;
   --foreground-muted: #a1a1aa;
-  --foreground-subtle: #71717a;
+  /* Bumped from #71717a (~3.9:1 on the #0f0f0f background — failed WCAG AA)
+     to #8b8b94 (~5:1) so small "subtle" labels pass the contrast audit and
+     read better on mobile. */
+  --foreground-subtle: #8b8b94;
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.14);
   --accent-from: #8b5cf6;

@@ -14,7 +14,7 @@ import {
 import { apiPublicSafe } from "@/lib/apiServer";
 import type { ApiCategory, ApiPost } from "@/lib/models";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
-import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
+import { SITE_AUTHOR_INFO, SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
 
 // Fallback ISR window. On-demand revalidation (the /api/revalidate webhook)
 // refreshes this instantly on publish; this 60s timer is the safety net for
@@ -56,19 +56,6 @@ export default async function HomePage() {
     apiPublicSafe<ApiPost[]>("/posts?limit=20", []),
     apiPublicSafe<ApiCategory[]>("/categories", []),
   ]);
-
-  // Featured authors = the unique, legitimately-assigned display authors
-  // (post.authorName). We never expose the admin account — if no posts have a
-  // real author assigned yet, the block simply hides. Names only.
-  const seenAuthors = new Set<string>();
-  const authors: { name: string }[] = [];
-  for (const p of posts) {
-    const name = p.authorName?.trim();
-    if (!name || seenAuthors.has(name)) continue;
-    seenAuthors.add(name);
-    authors.push({ name });
-    if (authors.length >= 4) break;
-  }
 
   const featured = posts.find((p) => p.featured) ?? posts[0];
   const trending = posts.filter((p) => p.trending).slice(0, 4);
@@ -168,7 +155,7 @@ export default async function HomePage() {
                     {featured.excerpt}
                   </p>
                   <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-                    {featured.authorName && <span>{featured.authorName}</span>}
+                    <span>{SITE_AUTHOR_INFO.name}</span>
                     {featured.readingTime >= 1 && (
                       <span className="flex items-center gap-1 text-foreground-subtle">
                         <Clock size={14} /> {featured.readingTime} min read
@@ -266,27 +253,30 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* AUTHORS */}
-      {authors.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <SectionHeader
-            icon={<Users size={16} />}
-            eyebrow="People behind the words"
-            title="Featured authors"
-          />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-            {authors.map((a) => (
-              <div key={a.name} className="card p-6 text-center">
-                <div className="mx-auto w-20 h-20 rounded-full bg-gradient-accent grid place-items-center text-white text-2xl font-bold">
-                  {a.name[0]}
-                </div>
-                <h3 className="mt-4 font-semibold">{a.name}</h3>
-                <p className="text-xs text-foreground-subtle">Author</p>
-              </div>
-            ))}
+      {/* AUTHOR — single-author publication: one consistent, verifiable
+          identity that links to the full bio (E-E-A-T). */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <SectionHeader
+          icon={<Users size={16} />}
+          eyebrow="The person behind the words"
+          title="Who writes Nexversal"
+        />
+        <Link
+          href={SITE_AUTHOR_INFO.profilePath}
+          className="card mt-8 p-6 flex items-center gap-5 hover:border-white/25 transition-colors"
+        >
+          <div className="shrink-0 w-20 h-20 rounded-full bg-gradient-accent grid place-items-center text-white text-2xl font-bold">
+            {SITE_AUTHOR_INFO.name[0]}
           </div>
-        </section>
-      )}
+          <div>
+            <h3 className="font-semibold text-lg">{SITE_AUTHOR_INFO.name}</h3>
+            <p className="text-sm text-accent font-medium">{SITE_AUTHOR_INFO.role}</p>
+            <p className="mt-1 text-sm text-foreground-muted">
+              Researches and writes every review and comparison on Nexversal.
+            </p>
+          </div>
+        </Link>
+      </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Newsletter />

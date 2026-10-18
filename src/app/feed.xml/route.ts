@@ -38,7 +38,7 @@ export async function GET() {
       <guid isPermaLink="true">${url}</guid>
       <description>${esc(p.excerpt)}</description>
       <pubDate>${pubDate}</pubDate>
-      <author>${esc(SITE_AUTHOR)} (${esc(p.author?.name ?? SITE_AUTHOR)})</author>
+      <author>${esc(SITE_AUTHOR)}</author>
       ${p.category ? `<category>${esc(p.category.name)}</category>` : ""}
     </item>`;
     })

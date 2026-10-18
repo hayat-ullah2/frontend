@@ -1,4 +1,4 @@
-import { SITE_AUTHOR, SITE_NAME, SITE_SOCIAL, SITE_URL, absoluteUrl } from "./site";
+import { SITE_AUTHOR_INFO, SITE_NAME, SITE_SOCIAL, SITE_URL, absoluteUrl } from "./site";
 import type { ApiCategory, ApiFaq, ApiPost } from "./models";
 
 /**
@@ -67,12 +67,15 @@ export function blogPostingSchema(post: ApiPost) {
     image: post.cover ? [post.cover] : undefined,
     datePublished: post.publishedAt,
     dateModified: (post as ApiPost & { updatedAt?: string }).updatedAt ?? post.publishedAt,
-    // Public author: the legitimately-assigned writer, or the approved editorial
-    // identity as a fallback — never the admin account that created the post.
+    // Single, verifiable author for the whole site. Emitting a real Person
+    // with a profile URL + external `sameAs` links is a strong E-E-A-T signal
+    // for Google (and AdSense review).
     author: [
       {
         "@type": "Person",
-        name: post.authorName || SITE_AUTHOR,
+        name: SITE_AUTHOR_INFO.name,
+        url: absoluteUrl(SITE_AUTHOR_INFO.profilePath),
+        sameAs: SITE_AUTHOR_INFO.sameAs,
       },
     ],
     publisher,
