@@ -131,6 +131,79 @@ const nextConfig: NextConfig = {
       { source: "/blog/future-of-artificial-intelligence-2026", destination: "/blog", permanent: true },
       { source: "/blog/the-anatomy-of-a-supply-chain-attack", destination: "/blog", permanent: true },
       { source: "/blog/designing-with-restraint", destination: "/blog", permanent: true },
+
+      // ── Root-level legacy URLs (no /blog/ prefix) from GSC ─────────────
+      // Same dead slugs as above but served at the site root (pre-/blog/
+      // structure). All 16 verified to currently 404; destinations verified
+      // 200. Kept separate from the /blog/-prefixed entries above.
+      {
+        source: "/the-best-chatgpt-alternatives-worth-trying",
+        destination: "/blog/chatgpt-alternatives",
+        permanent: true,
+      },
+      {
+        source: "/best-ai-tools-for-text-to-video-generators",
+        destination: "/blog/ai-tools-for-a-video-generator",
+        permanent: true,
+      },
+      {
+        source: "/ai-tools-for-text-to-video-generators",
+        destination: "/blog/ai-tools-for-a-video-generator",
+        permanent: true,
+      },
+      {
+        source: "/best-ai-video-generators-for-creators-in-2026",
+        destination: "/blog/ai-tools-for-a-video-generator",
+        permanent: true,
+      },
+      {
+        source: "/kepler-vs-github-copilot",
+        destination: "/blog/kepler-ai-coding",
+        permanent: true,
+      },
+      {
+        source: "/gitkraken-kepler",
+        destination: "/blog/gitkraken-kepler-tutorial",
+        permanent: true,
+      },
+      {
+        source: "/seo-in-the-age-of-answer-engines",
+        destination: "/blog/best-ai-seo-tools",
+        permanent: true,
+      },
+      {
+        source: "/search-marketing-course",
+        destination: "/blog/best-ai-seo-tools",
+        permanent: true,
+      },
+      {
+        source: "/how-to-learn-seo-at-home-for-free-complete-2026-roadmap",
+        destination: "/blog/best-ai-seo-tools",
+        permanent: true,
+      },
+      {
+        source: "/key-takeaways-for-mastering-rankings",
+        destination: "/blog/best-ai-seo-tools",
+        permanent: true,
+      },
+      { source: "/future-of-artificial-intelligence-2026", destination: "/blog", permanent: true },
+      { source: "/the-anatomy-of-a-supply-chain-attack", destination: "/blog", permanent: true },
+      { source: "/designing-with-restraint", destination: "/blog", permanent: true },
+      {
+        source: "/the-self-taught-engineers-curriculum",
+        destination: "/blog/best-free-ai-tools-for-coding-2026",
+        permanent: true,
+      },
+      {
+        source: "/the-quiet-revolution-of-agentic-llms",
+        destination: "/blog/chatgpt-vs-claude-vs-gemini-which-should-you-use",
+        permanent: true,
+      },
+      {
+        source: "/why-pricing-is-strategy-not-a-number",
+        destination: "/blog/ai-tools-for-small-business",
+        permanent: true,
+      },
     ];
   },
 };
